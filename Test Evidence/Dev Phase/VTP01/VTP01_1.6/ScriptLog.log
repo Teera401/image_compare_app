@@ -1,0 +1,136 @@
+*************************************************************
+**   TEST SCRIPT (INFO)
+*************************************************************
+*************************************************************
+**Hostname          : SIRIWSX1
+**APT Serial        : 910004789
+**APT Model         : LSRM1000
+**PR Version        : v1.0 rev8
+**VTP Number        : VTP01_1.6
+**Script Name       : Power button – Ongoing events – Upload ongoing – 8 seconds
+**Firmware Version  : 6.0.0_release
+**TSR Version       : v1.0
+*************************************************************
+*************************************************************
+2025-11-21 16:10:46,313 - INFO - Connected to APT Unit on port COM3 with baudrate 230400
+2025-11-21 16:10:46,315 - INFO - Started logging serial data to APTLog.log
+2025-11-21 16:10:46,315 - INFO - Running step: Reboot the APT unit
+2025-11-21 16:10:46,316 - INFO - Sent command to APT Unit: Stress testing transmitter_reboot 0
+2025-11-21 16:10:46,316 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:10:46,769 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:10:46,770 - INFO - Running step: Wait for CLI API start after power on
+2025-11-21 16:10:46,770 - INFO - Waits for the 'CLI API Test Start' from the connected serial port
+2025-11-21 16:11:00,662 - INFO - The expected 'CLI API Test Start' is received
+2025-11-21 16:11:00,662 - INFO - Running step: Reset APT unit and complete the setup by selecting English language
+2025-11-21 16:11:00,663 - INFO - Performing a factory reset and completes the setup process for a APT device
+2025-11-21 16:11:00,663 - INFO - Sent command to APT Unit: press_Reset_Button 10
+2025-11-21 16:11:00,664 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:11:01,373 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:11:01,374 - INFO - Waits for the 'Reset button was pressed more than 8 seconds: Factory reset' from the connected serial port
+2025-11-21 16:11:09,067 - INFO - The expected 'Reset button was pressed more than 8 seconds: Factory reset' is received
+2025-11-21 16:11:09,067 - INFO - Waits for the 'CLI API Test Start' from the connected serial port
+2025-11-21 16:12:03,448 - INFO - The expected 'CLI API Test Start' is received
+2025-11-21 16:12:03,448 - INFO - Initiate API normal run process
+2025-11-21 16:12:03,448 - INFO - Waits for the 'command not valid' from the connected serial port
+2025-11-21 16:12:03,955 - INFO - The expected 'command not valid' is received
+2025-11-21 16:12:03,956 - INFO - Waits for the 'Show Language Selection screen' from the connected serial port
+2025-11-21 16:12:18,845 - INFO - The expected 'Show Language Selection screen' is received
+2025-11-21 16:12:18,845 - INFO - Tapping screen button: LanguageSelection
+2025-11-21 16:12:18,847 - INFO - Sent command to APT Unit: press_Guibutton 198 135
+2025-11-21 16:12:18,847 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:12:19,455 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:12:19,455 - INFO - Tapping screen button: English
+2025-11-21 16:12:19,456 - INFO - Sent command to APT Unit: press_Guibutton 60 135
+2025-11-21 16:12:19,456 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:12:21,189 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:12:21,189 - INFO - Waits for the 'Show Selected Language screen' from the connected serial port
+2025-11-21 16:12:21,594 - INFO - The expected 'Show Selected Language screen' is received
+2025-11-21 16:12:21,595 - INFO - Tapping screen button: Language confirmation
+2025-11-21 16:12:21,595 - INFO - Sent command to APT Unit: press_Guibutton 400 130
+2025-11-21 16:12:21,596 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:12:22,402 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:12:22,404 - INFO - Waits for the 'Show Start Setup screen' from the connected serial port
+2025-11-21 16:12:24,397 - INFO - The expected 'Show Start Setup screen' is received
+2025-11-21 16:12:24,397 - INFO - Tapping screen button: Start
+2025-11-21 16:12:24,398 - INFO - Sent command to APT Unit: press_Guibutton 242 137
+2025-11-21 16:12:24,398 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:12:25,003 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:12:25,004 - INFO - Waits for the 'Show Setting Up Success screen' from the connected serial port
+2025-11-21 16:13:33,653 - INFO - The expected 'Show Setting Up Success screen' is received
+2025-11-21 16:13:33,653 - INFO - Delays the system for 4 seconds
+2025-11-21 16:13:37,653 - INFO - Tapping screen button: Finish set up
+2025-11-21 16:13:37,653 - INFO - Sent command to APT Unit: press_Guibutton 242 137
+2025-11-21 16:13:37,653 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:13:38,940 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:13:38,940 - INFO - Waits for the 'Show Begin Session screen' from the connected serial port
+2025-11-21 16:13:39,245 - INFO - The expected 'Show Begin Session screen' is received
+2025-11-21 16:13:39,245 - INFO - Tapping screen button: YES
+2025-11-21 16:13:39,245 - INFO - Sent command to APT Unit: press_Guibutton 255 80
+2025-11-21 16:13:39,246 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:13:39,963 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:13:39,963 - INFO - Running step: Wait for Show Start Session screen
+2025-11-21 16:13:39,963 - INFO - Waits for the 'Show Start Session screen' from the connected serial port
+2025-11-21 16:13:40,266 - INFO - The expected 'Show Start Session screen' is received
+2025-11-21 16:13:40,266 - INFO - Running step: Wait for START SESSION screen to be ready
+2025-11-21 16:13:40,266 - INFO - Delays the system for 4 seconds
+2025-11-21 16:13:44,267 - INFO - Running step: Tap Start Session
+2025-11-21 16:13:44,267 - INFO - Tapping screen button: Start
+2025-11-21 16:13:44,267 - INFO - Sent command to APT Unit: press_Guibutton 242 137
+2025-11-21 16:13:44,267 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:13:44,795 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:13:44,796 - INFO - Running step: Wait for Electrode Mode screen
+2025-11-21 16:13:44,796 - INFO - Waits for the 'Show Electrode Mode screen' from the connected serial port
+2025-11-21 16:13:45,100 - INFO - The expected 'Show Electrode Mode screen' is received
+2025-11-21 16:13:45,100 - INFO - Running step: Select Handheld
+2025-11-21 16:13:45,100 - INFO - Tapping screen button: Handheld bar
+2025-11-21 16:13:45,101 - INFO - Sent command to APT Unit: press_Guibutton 175 135
+2025-11-21 16:13:45,101 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:13:45,817 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:13:45,817 - INFO - Running step: Wait for Hand-Held Instruction screen
+2025-11-21 16:13:45,818 - INFO - Waits for the 'Show Hand-Held Instruction screen' from the connected serial port
+2025-11-21 16:13:46,123 - INFO - The expected 'Show Hand-Held Instruction screen' is received
+2025-11-21 16:13:46,124 - INFO - Running step: Tap Interrogation - next
+2025-11-21 16:13:46,124 - INFO - Tapping screen button: Interrogation - next
+2025-11-21 16:13:46,125 - INFO - Sent command to APT Unit: press_Guibutton 405 193
+2025-11-21 16:13:46,125 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:13:46,826 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:13:46,826 - INFO - Running step: Wait for Show Interrogation screen
+2025-11-21 16:13:46,827 - INFO - Waits for the 'Show Interrogation screen' from the connected serial port
+2025-11-21 16:13:57,721 - INFO - The expected 'Show Interrogation screen' is received
+2025-11-21 16:13:57,722 - INFO - Running step: Wait for Interrogation complete
+2025-11-21 16:13:57,722 - INFO - Waits for the 'After interrogation is finished, prepare to upload' from the connected serial port
+2025-11-21 16:14:59,945 - INFO - The expected 'After interrogation is finished, prepare to upload' is received
+2025-11-21 16:14:59,945 - INFO - Running step: wait for SENDING DATA screen
+2025-11-21 16:14:59,946 - INFO - Waits for the 'Show ePageState_UploadData' from the connected serial port
+2025-11-21 16:15:21,602 - INFO - The expected 'Show ePageState_UploadData' is received
+2025-11-21 16:15:21,602 - INFO - Running step: Reboot the APT unit
+2025-11-21 16:15:21,603 - INFO - Sent command to APT Unit: Stress testing transmitter_reboot 0
+2025-11-21 16:15:21,606 - INFO - Waits for the 'result : SUCCESS' from the connected serial port
+2025-11-21 16:15:21,907 - INFO - The expected 'result : SUCCESS' is received
+2025-11-21 16:15:21,908 - INFO - Running step: Wait for CLI API Test Start
+2025-11-21 16:15:21,908 - INFO - Waits for the 'CLI API Test Start' from the connected serial port
+2025-11-21 16:15:35,876 - INFO - The expected 'CLI API Test Start' is received
+2025-11-21 16:15:35,876 - INFO - Running step: Execute normal operation flow
+2025-11-21 16:15:35,877 - INFO - Initiate API normal run process
+2025-11-21 16:15:35,877 - INFO - Waits for the 'command not valid' from the connected serial port
+2025-11-21 16:15:36,284 - INFO - The expected 'command not valid' is received
+2025-11-21 16:15:36,284 - INFO - Running step: Wait for Show Abbott logo screen
+2025-11-21 16:15:36,285 - INFO - Waits for the 'Show Abbott logo screen' from the connected serial port
+2025-11-21 16:15:38,075 - INFO - The expected 'Show Abbott logo screen' is received
+2025-11-21 16:15:38,076 - INFO - Running step: Press power button for 10 seconds
+2025-11-21 16:15:38,077 - INFO - Sent command to APT Unit: press_Button 10
+2025-11-21 16:15:38,077 - INFO - Verifying: Verify no maintenance logs sent to PCN
+2025-11-21 16:15:38,078 - INFO - Waits for the 'not support maintenance mode' from the connected serial port
+2025-11-21 16:15:48,888 - INFO - The expected 'not support maintenance mode' is received
+2025-11-21 16:15:48,888 - RESULT - APT-2924: PASS
+2025-11-21 16:15:48,888 - INFO - Running step: Wait for SENDING pending DATA screen
+2025-11-21 16:15:48,889 - INFO - Waits for the 'Show Sending Data screen [Pending]' from the connected serial port
+2025-11-21 16:16:08,310 - INFO - The expected 'Show Sending Data screen [Pending]' is received
+2025-11-21 16:16:08,311 - INFO - Running step: Press power button for 10 seconds
+2025-11-21 16:16:08,311 - INFO - Sent command to APT Unit: press_Button 10
+2025-11-21 16:16:08,312 - INFO - Verifying: Verify no maintenance logs sent to PCN
+2025-11-21 16:16:08,312 - INFO - Waits for the 'not support maintenance mode' from the connected serial port
+2025-11-21 16:16:18,490 - INFO - The expected 'not support maintenance mode' is received
+2025-11-21 16:16:18,490 - RESULT - APT-2924: PASS
+2025-11-21 16:16:18,591 - INFO - Stopped logging serial data
+2025-11-21 16:16:18,695 - INFO - Disconnected from APT Unit

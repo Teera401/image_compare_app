@@ -1,6 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication
-from image_viewer import ImageCompareViewer
+
+from modules.image_viewer import ImageCompareViewer
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
