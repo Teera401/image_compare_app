@@ -22,6 +22,11 @@ class ZoomableImageView(QGraphicsView):
         self.zoom_factor = 1.25
 
     def set_image(self, image_path):
+        if not image_path:
+            self.scene.clear()
+            self.pixmap_item = QGraphicsPixmapItem()
+            self.scene.addItem(self.pixmap_item)
+            return
         pixmap = QPixmap(image_path)
         self.pixmap_item.setPixmap(pixmap)
         self.scene.setSceneRect(pixmap.rect())
