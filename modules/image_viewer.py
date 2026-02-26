@@ -100,10 +100,12 @@ class ImageCompareViewer(QWidget):
     def choose_evidence_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Evidence Folder", "")
         if folder_path:
+            self.btn_choot_folder_evd.setEnabled(False)
             self.settingCnfProvider.is_mamual_photo_evidence_path = True
             self.settingCnfProvider.photo_evidence_path = folder_path
             self.evidence_alias_mapping_dict = self.settingCnfProvider.read_evidence_mapping_config(is_from_folder=True)
             self.index = None
+        self.btn_choot_folder_evd.setEnabled(True)
 
     def load_images(self, ref_pic_path=None, evidence_pic_path=None):
         self.view_ref.set_image(ref_pic_path)
