@@ -7,12 +7,15 @@ from modules.pic_prop_ref import PicPropRef
 
 
 class PicPropEvidence:
-    def __init__(self, full_path=None):        
+    def __init__(self, full_path=None):
+
         alias = re.sub(r'[^a-zA-Z0-9_,]', '', (os.path.basename(full_path).split(".")[0])) if full_path else None
         alias_match = re.search(r'Step\d+(.*)_screen', alias, re.IGNORECASE)
         alias_match = re.search(r'Step\d+(.*)', alias, re.IGNORECASE) if not alias_match else alias_match
+        pic_step_match = re.search(r'Step(\d+)', alias, re.IGNORECASE)
         self.alias = alias_match.group(1).lower() if alias_match else alias
-
+        self.step = pic_step_match.group(1) if pic_step_match else ""
+        self.pic_name = os.path.basename(full_path) if full_path else None
         self.key = None
         self.vpt_name = None
         self.test_case_name = None
@@ -28,7 +31,7 @@ class PicPropEvidence:
             if matchTc:                
                 self.test_case_name = matchTc.group(1)
             if matchVtpKey:
-                self.key = f"{matchVtpKey.group(1)}_{self.alias}"
+                self.key = f"{matchVtpKey.group(1)}_{self.pic_name}"
                 break       
     def set_picprop_ref(self, alias_mapping_config_dict, refer_data_mapping_list, language_mapping):
         if not self.alias or not alias_mapping_config_dict or not refer_data_mapping_list:

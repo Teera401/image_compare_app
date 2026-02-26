@@ -31,6 +31,8 @@ class ZoomableImageView(QGraphicsView):
         self.pixmap_item.setPixmap(pixmap)
         self.scene.setSceneRect(pixmap.rect())
         self.resetTransform()
+        self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
+
 
     def wheelEvent(self, event):
         if event.angleDelta().y() > 0:

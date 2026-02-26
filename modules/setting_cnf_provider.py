@@ -8,6 +8,7 @@ import os
 
 from modules.pic_prop_evidence import PicPropEvidence
 from modules.pic_prop_ref import PicPropRef
+from modules.text_string_compare import TextStringCompare
 
 CONFIG_FILE = "config.yaml"
 IMAGE_EXTS = (".jpg", ".jpeg", ".png")
@@ -20,6 +21,10 @@ class SettingCnfProvider:
             self.photo_evidence_path = config.get("photo_evidence_path")
             self.photo_evidence_directory = config.get("photo_evidence_directory")
             self.language_all_testcase_path = config.get("language_all_testcase_path")
+            self.text_string_compare_file = config.get("text_string_compare_file")
+            self.is_mamual_photo_evidence_path = False
+
+            
     
     def read_language_mapping(self):
         language_mapping_dict = dict()
@@ -92,7 +97,8 @@ class SettingCnfProvider:
         evidence_pics = []
         level = 0
         for root, dirs, files in os.walk(self.photo_evidence_path):
-            dirs[:] = [d for d in dirs if d.startswith("VTP")] if level == 0 else dirs
+            if not self.is_mamual_photo_evidence_path:
+                dirs[:] = [d for d in dirs if d.startswith("VTP")] if level == 0 else dirs
             for file in files:
                 if file.lower().endswith(IMAGE_EXTS):
                     full_path = os.path.join(root, file)
@@ -117,7 +123,8 @@ class SettingCnfProvider:
                 evidence_alias_mapping_set.add(row["Alias"])
         evidence_alias_mapping_set = sorted(evidence_alias_mapping_set)
         return evidence_alias_mapping_set  
-    
+
+# Initial Data  
     def read_evidence_mapping_config(self, is_from_folder=False):
         alias_mapping_config_dict = self.read_alias_mapping_config()  #adjustcontactl,r,t,  adjust_contact_1
         refer_data_mapping_list = self.read_refer_data_mapping_config()
@@ -139,6 +146,10 @@ class SettingCnfProvider:
 
         evidence_alias_mapping_dict = dict(sorted(evidence_alias_mapping_dict.items(), key=lambda item: item[0]))
         return evidence_alias_mapping_dict  
+    
+    def read_text_string_compare_data(self):
+        text_string_compare_data = TextStringCompare.load_data_xls(self.text_string_compare_file)
+        return text_string_compare_data
     
     
 

@@ -2,7 +2,7 @@ import csv
 import os
 from PySide6.QtWidgets import QCheckBox, QLabel, QLineEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
 import yaml
-
+from PySide6.QtWidgets import QFileDialog
 from modules.pic_prop_evidence import PicPropEvidence
 from modules.setting_cnf_provider import SettingCnfProvider
 from modules.zoomable_view import ZoomableImageView
@@ -12,8 +12,8 @@ CONFIG_FILE = "config.yaml"
 class ImageCompareViewer(QWidget):
     def __init__(self):
         super().__init__()
-        settingCnf = SettingCnfProvider()
-        self.evidence_alias_mapping_dict = settingCnf.read_evidence_mapping_config(is_from_folder=True)
+        self.settingCnfProvider = SettingCnfProvider()
+        # self.evidence_alias_mapping_dict = self.settingCnfProvider.read_evidence_mapping_config(is_from_folder=False)
         # read_evidence_mapping_config = settingCnf.read_evidence_mapping_config()
         self.index = None
         self.init_ui()
@@ -40,8 +40,8 @@ class ImageCompareViewer(QWidget):
         
         self.txt_set_index.returnPressed.connect(self.set_index)
         # Zoomable views
-        self.view_a = ZoomableImageView()
-        self.view_b = ZoomableImageView()
+        self.view_ref = ZoomableImageView()
+        self.view_evidence = ZoomableImageView()
 
         # Buttons
         self.back_btn = QPushButton("◀ Back")
@@ -53,9 +53,10 @@ class ImageCompareViewer(QWidget):
         # Layouts Label
         label_layout = QHBoxLayout()
         label_ref = QLabel("Reference")
-        label_evidence = QLabel("Evidence")
+        btn_choot_folder_evd = QPushButton("Choose Evidence Folder")
+        btn_choot_folder_evd.clicked.connect(self.choose_evidence_folder)
         label_layout.addWidget(label_ref)
-        label_layout.addWidget(label_evidence)
+        label_layout.addWidget(btn_choot_folder_evd)
 
         # Layouts
         txt_path_layout = QHBoxLayout()
@@ -66,19 +67,19 @@ class ImageCompareViewer(QWidget):
         txt_path_layout.addWidget(QLabel("Path Evidence:"))
         txt_path_layout.addWidget(self.tbx_path_evidence)
 
-        text_align_layout = QHBoxLayout()
+        text_alias_layout = QHBoxLayout()
         self.tbx_alias_ref = QLineEdit()
         self.tbx_alias_evidence = QLineEdit()
-        text_align_layout.addWidget(QLabel("Alias Ref:"))
-        text_align_layout.addWidget(self.tbx_alias_ref)
-        text_align_layout.addWidget(QLabel("Alias Evidence:"))
-        text_align_layout.addWidget(self.tbx_alias_evidence)
+        text_alias_layout.addWidget(QLabel("Alias Ref:"))
+        text_alias_layout.addWidget(self.tbx_alias_ref)
+        text_alias_layout.addWidget(QLabel("Alias Evidence:"))
+        text_alias_layout.addWidget(self.tbx_alias_evidence)
 
 
         # Layouts
         img_layout = QHBoxLayout()
-        img_layout.addWidget(self.view_a)
-        img_layout.addWidget(self.view_b)
+        img_layout.addWidget(self.view_ref)
+        img_layout.addWidget(self.view_evidence)
 
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
@@ -91,16 +92,22 @@ class ImageCompareViewer(QWidget):
 
         main_layout = QVBoxLayout(self)
         main_layout.addLayout(label_layout)
-        main_layout.addLayout(text_align_layout)
+        main_layout.addLayout(text_alias_layout)
         main_layout.addLayout(txt_path_layout)
         main_layout.addLayout(img_layout)
         main_layout.addLayout(btn_layout)
 
-
+    def choose_evidence_folder(self):
+        folder_path = QFileDialog.getExistingDirectory(self, "Select Evidence Folder", "")
+        if folder_path:
+            self.settingCnfProvider.is_mamual_photo_evidence_path = True
+            self.settingCnfProvider.photo_evidence_path = folder_path
+            self.evidence_alias_mapping_dict = self.settingCnfProvider.read_evidence_mapping_config(is_from_folder=True)
+            self.index = None
 
     def load_images(self, ref_pic_path=None, evidence_pic_path=None):
-        self.view_a.set_image(ref_pic_path)
-        self.view_b.set_image(evidence_pic_path)
+        self.view_ref.set_image(ref_pic_path)
+        self.view_evidence.set_image(evidence_pic_path)
 
     def next_image(self):        
         if self.index is None:
