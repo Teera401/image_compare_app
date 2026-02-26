@@ -53,10 +53,10 @@ class ImageCompareViewer(QWidget):
         # Layouts Label
         label_layout = QHBoxLayout()
         label_ref = QLabel("Reference")
-        btn_choot_folder_evd = QPushButton("Choose Evidence Folder")
-        btn_choot_folder_evd.clicked.connect(self.choose_evidence_folder)
+        self.btn_choot_folder_evd = QPushButton("Choose Evidence Folder")
+        self.btn_choot_folder_evd.clicked.connect(self.choose_evidence_folder)
         label_layout.addWidget(label_ref)
-        label_layout.addWidget(btn_choot_folder_evd)
+        label_layout.addWidget(self.btn_choot_folder_evd)
 
         # Layouts
         txt_path_layout = QHBoxLayout()
