@@ -87,20 +87,21 @@ class SettingCnfProvider:
                 #     "hash_value": row["Hash Value"]
                 # })
         return data_mapping_list
-         
 
-    def write_evidence_mapping_config(self):
+    def get_pic_prop_evidence(self):
         evidence_pics = []
         level = 0
         for root, dirs, files in os.walk(self.photo_evidence_path):
-              # keep only folders starting with "VTP"
             dirs[:] = [d for d in dirs if d.startswith("VTP")] if level == 0 else dirs
             for file in files:
                 if file.lower().endswith(IMAGE_EXTS):
                     full_path = os.path.join(root, file)
                     evidence_pics.append(PicPropEvidence(full_path))
             level += 1
-        
+        return evidence_pics
+
+    def write_evidence_mapping_config(self):
+        evidence_pics = self.get_pic_prop_evidence()        
         with open(os.path.join("conf", "evidence_pic_mapping.csv"), mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["Alias", "VTP Name", "Full Path"])
@@ -117,17 +118,24 @@ class SettingCnfProvider:
         evidence_alias_mapping_set = sorted(evidence_alias_mapping_set)
         return evidence_alias_mapping_set  
     
-    def read_evidence_mapping_config(self):
+    def read_evidence_mapping_config(self, is_from_folder=False):
         alias_mapping_config_dict = self.read_alias_mapping_config()  #adjustcontactl,r,t,  adjust_contact_1
         refer_data_mapping_list = self.read_refer_data_mapping_config()
         language_mapping = self.read_language_mapping()
         evidence_alias_mapping_dict = dict()
-        with open(os.path.join("conf", "evidence_pic_mapping.csv"), newline="", encoding="utf-8") as file:
-            reader = csv.DictReader(file)            
-            for row in reader:
-                picPropEvidence = PicPropEvidence(full_path=row["Full Path"])
-                picPropEvidence.set_picprop_ref(alias_mapping_config_dict, refer_data_mapping_list, language_mapping)
-                evidence_alias_mapping_dict[picPropEvidence.key] = picPropEvidence
+        if not is_from_folder:
+            with open(os.path.join("conf", "evidence_pic_mapping.csv"), newline="", encoding="utf-8") as file:
+                reader = csv.DictReader(file)            
+                for row in reader:
+                    picPropEvidence = PicPropEvidence(full_path=row["Full Path"])
+                    picPropEvidence.set_picprop_ref(alias_mapping_config_dict, refer_data_mapping_list, language_mapping)
+                    evidence_alias_mapping_dict[picPropEvidence.key] = picPropEvidence
+        else:
+            evidence_pics = self.get_pic_prop_evidence()
+            for pic in evidence_pics:
+                pic: PicPropEvidence
+                pic.set_picprop_ref(alias_mapping_config_dict, refer_data_mapping_list, language_mapping)
+                evidence_alias_mapping_dict[pic.key] = pic
 
         evidence_alias_mapping_dict = dict(sorted(evidence_alias_mapping_dict.items(), key=lambda item: item[0]))
         return evidence_alias_mapping_dict  

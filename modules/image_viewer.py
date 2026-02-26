@@ -1,6 +1,6 @@
 import csv
 import os
-from PySide6.QtWidgets import QLabel, QLineEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QCheckBox, QLabel, QLineEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
 import yaml
 
 from modules.pic_prop_evidence import PicPropEvidence
@@ -13,17 +13,32 @@ class ImageCompareViewer(QWidget):
     def __init__(self):
         super().__init__()
         settingCnf = SettingCnfProvider()
-        self.evidence_alias_mapping_dict = settingCnf.read_evidence_mapping_config()
+        self.evidence_alias_mapping_dict = settingCnf.read_evidence_mapping_config(is_from_folder=True)
         # read_evidence_mapping_config = settingCnf.read_evidence_mapping_config()
         self.index = None
         self.init_ui()
         # self.next_image()
+
+    def set_index(self):
+        try:
+            idx = int(self.txt_set_index.text())
+            if 0 <= idx < len(self.evidence_alias_mapping_dict):
+                self.index = idx
+                self.next_image()
+            else:
+                self.txt_set_index.setText("")
+        except ValueError:
+            self.txt_set_index.setText("")
 
     def init_ui(self):
         self.setWindowTitle("Image Compare (Zoom & Pan)")
         self.resize(1200, 600)
 
         self.label_index = QLabel()
+        self.cb_fixed_picref = QCheckBox("Fixed PicRef")
+        self.txt_set_index = QLineEdit()
+        
+        self.txt_set_index.returnPressed.connect(self.set_index)
         # Zoomable views
         self.view_a = ZoomableImageView()
         self.view_b = ZoomableImageView()
@@ -67,6 +82,8 @@ class ImageCompareViewer(QWidget):
 
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
+        btn_layout.addWidget(self.txt_set_index)
+        btn_layout.addWidget(self.cb_fixed_picref)
         btn_layout.addWidget(self.label_index)
         btn_layout.addWidget(self.back_btn)
         btn_layout.addWidget(self.next_btn)
@@ -90,16 +107,18 @@ class ImageCompareViewer(QWidget):
             self.index = 0
         elif self.index < len(self.evidence_alias_mapping_dict) - 1:
                 self.index += 1
-        var:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
-        if not var:
+        picPropEvidence:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
+        if not picPropEvidence:
             return
+        self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef 
+
         self.label_index.setText(f"Index: {self.index} / {len(self.evidence_alias_mapping_dict)-1}")
-        ref_pic_path = var.PicPropRef.full_path if var.PicPropRef else None
-        evidence_pic_path = var.full_path if var else None
+        ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
+        evidence_pic_path = picPropEvidence.full_path if picPropEvidence else None
         self.tbx_path_ref.setText(ref_pic_path if ref_pic_path else "")
         self.tbx_path_evidence.setText(evidence_pic_path if evidence_pic_path else "")
-        self.tbx_alias_ref.setText(var.PicPropRef.alias if var.PicPropRef else "")
-        self.tbx_alias_evidence.setText(var.alias if var else "")
+        self.tbx_alias_ref.setText(self.picPropRef.alias if self.picPropRef else "")
+        self.tbx_alias_evidence.setText(picPropEvidence.alias if picPropEvidence else "")
         self.load_images(ref_pic_path, evidence_pic_path)
 
 
@@ -108,15 +127,16 @@ class ImageCompareViewer(QWidget):
             self.index = 0
         elif self.index > 0:
                 self.index -= 1
-        var:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
-        if not var:
+        picPropEvidence:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
+        if not picPropEvidence:
             return
+        self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef 
         self.label_index.setText(f"Index: {self.index} / {len(self.evidence_alias_mapping_dict)-1}")
-        ref_pic_path = var.PicPropRef.full_path if var.PicPropRef else None
-        evidence_pic_path = var.full_path if var else None
+        ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
+        evidence_pic_path = picPropEvidence.full_path if picPropEvidence else None
         self.tbx_path_ref.setText(ref_pic_path if ref_pic_path else "")
         self.tbx_path_evidence.setText(evidence_pic_path if evidence_pic_path else "")
-        self.tbx_alias_ref.setText(var.PicPropRef.alias if var.PicPropRef else "")
-        self.tbx_alias_evidence.setText(var.alias if var else "")
+        self.tbx_alias_ref.setText(self.picPropRef.alias if self.picPropRef else "")
+        self.tbx_alias_evidence.setText(picPropEvidence.alias if picPropEvidence else "")
         self.load_images(ref_pic_path, evidence_pic_path)
 
