@@ -8,7 +8,7 @@ import os
 
 from modules.pic_prop_evidence import PicPropEvidence
 from modules.pic_prop_ref import PicPropRef
-from modules.text_string_compare import TextStringCompare
+from modules.string_compare_xlsx import StringCompareSlsx
 
 CONFIG_FILE = "config.yaml"
 IMAGE_EXTS = (".jpg", ".jpeg", ".png")
@@ -23,8 +23,7 @@ class SettingCnfProvider:
             self.language_all_testcase_path = config.get("language_all_testcase_path")
             self.text_string_compare_file = config.get("text_string_compare_file")
             self.is_mamual_photo_evidence_path = False
-
-            
+  
     
     def read_language_mapping(self):
         language_mapping_dict = dict()
@@ -148,7 +147,7 @@ class SettingCnfProvider:
         return evidence_alias_mapping_dict  
     
     def read_text_string_compare_data(self):
-        text_string_compare_data = TextStringCompare.load_data_xls(self.text_string_compare_file)
+        text_string_compare_data = StringCompareSlsx.load_data_xls(self.text_string_compare_file)
         return text_string_compare_data
     
     

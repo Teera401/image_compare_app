@@ -1,6 +1,9 @@
 import csv
 import os
+import pandas as pd
+
 from PySide6.QtWidgets import QCheckBox, QLabel, QLineEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
+from PySide6.QtGui import QPalette, Qt
 import yaml
 from PySide6.QtWidgets import QFileDialog
 from modules.pic_prop_evidence import PicPropEvidence
@@ -9,15 +12,22 @@ from modules.zoomable_view import ZoomableImageView
 
     
 CONFIG_FILE = "config.yaml"
+SHEET_HEAD = 'Head-New'
+SHEET_PARA = 'Para-New'
+
 class ImageCompareViewer(QWidget):
     def __init__(self):
         super().__init__()
         self.settingCnfProvider = SettingCnfProvider()
+        self.evidence_alias_mapping_dict = dict()
         # self.evidence_alias_mapping_dict = self.settingCnfProvider.read_evidence_mapping_config(is_from_folder=False)
         # read_evidence_mapping_config = settingCnf.read_evidence_mapping_config()
         self.index = None
         self.init_ui()
-        # self.next_image()
+        
+        self.header_string_lang_dict = dict()
+        self.para_string_lang_dict = dict()
+        self.load_string_language_xls(self.settingCnfProvider.text_string_compare_file)
 
     def set_index(self):
         try:
@@ -29,15 +39,23 @@ class ImageCompareViewer(QWidget):
                 self.txt_set_index.setText("")
         except ValueError:
             self.txt_set_index.setText("")
+    def clear_all_components_value(self):
+        self.txt_set_index.setText("")
+        self.tbx_path_ref.setText("")
+        self.tbx_path_evidence.setText("")
+        self.tbx_alias_ref.setText("")
+        self.tbx_alias_evidence.setText("")
+        self.picture_number.setText(f"Index: - / {len(self.evidence_alias_mapping_dict)}")
+        self.view_ref.set_image(None)
+        self.view_evidence.set_image(None)
 
     def init_ui(self):
         self.setWindowTitle("Image Compare (Zoom & Pan)")
         self.resize(1200, 600)
 
-        self.label_index = QLabel()
+        self.picture_number = QLabel()
         self.cb_fixed_picref = QCheckBox("Fixed PicRef")
         self.txt_set_index = QLineEdit()
-        
         self.txt_set_index.returnPressed.connect(self.set_index)
         # Zoomable views
         self.view_ref = ZoomableImageView()
@@ -49,13 +67,27 @@ class ImageCompareViewer(QWidget):
 
         self.back_btn.clicked.connect(self.prev_image)
         self.next_btn.clicked.connect(self.next_image)
+        self.back_btn.setFixedHeight(40)
+        self.next_btn.setFixedHeight(40)
+        self.back_btn.setFixedWidth(100)
+        self.next_btn.setFixedWidth(100)
+        self.back_btn.setStyleSheet("background-color: lightblue;")
+        self.next_btn.setStyleSheet("background-color: lightblue;")
 
         # Layouts Label
         label_layout = QHBoxLayout()
         label_ref = QLabel("Reference")
         self.btn_choot_folder_evd = QPushButton("Choose Evidence Folder")
+        self.btn_choot_folder_evd.setFixedHeight(30)
+        self.btn_choot_folder_evd.setFixedWidth(150)
+        self.btn_choot_folder_evd.setStyleSheet("background-color: lightblue;")
         self.btn_choot_folder_evd.clicked.connect(self.choose_evidence_folder)
+        self.evidence_select_path = QLineEdit()
+        self.evidence_select_path.setReadOnly(True)
+        self.evidence_select_path.setFixedHeight(30)
+        self.evidence_select_path.setFixedWidth(250)
         label_layout.addWidget(label_ref)
+        label_layout.addWidget(self.evidence_select_path)
         label_layout.addWidget(self.btn_choot_folder_evd)
 
         # Layouts
@@ -83,12 +115,76 @@ class ImageCompareViewer(QWidget):
 
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
-        btn_layout.addWidget(self.txt_set_index)
-        btn_layout.addWidget(self.cb_fixed_picref)
-        btn_layout.addWidget(self.label_index)
+        # btn_layout.addWidget(self.txt_set_index)
+        # btn_layout.addWidget(self.cb_fixed_picref)
+        btn_layout.addWidget(self.picture_number)
         btn_layout.addWidget(self.back_btn)
         btn_layout.addWidget(self.next_btn)
         btn_layout.addStretch()
+
+        lang_xlsx_layout_base = QHBoxLayout()
+        label_ref_txt = QLabel("Referent Text String:")
+        label_ref_txt_string_filename = QLabel("Referent Text String File: Nme.xlsx")
+        label_ref_txt_string_v_date = QLabel("Version Date: 2026-02-24")
+        ref_txt_xlsx_file = QLineEdit()
+        ref_txt_xlsx_file.setFixedWidth(250)       
+        ref_txt_xlsx_file.setReadOnly(True)
+        ref_choose_btn = QPushButton("Choose XLSX File")
+        ref_choose_btn.setStyleSheet("background-color: lightgreen;")
+        ref_choose_btn.setFixedWidth(150)
+        ref_choose_btn.setFixedHeight(30)
+        lang_xlsx_layout_bx1_ch1 = QHBoxLayout()
+        ref_choose_btn.clicked.connect(self.choose_ref_text_xlsx_file)
+        lang_xlsx_layout_bx1_ch1.addWidget(label_ref_txt, alignment=Qt.AlignLeft)
+        lang_xlsx_layout_bx1_ch1.addWidget(ref_txt_xlsx_file, alignment=Qt.AlignLeft)
+        lang_xlsx_layout_bx1_ch1.addWidget(ref_choose_btn, alignment=Qt.AlignLeft)
+        lang_xlsx_layout_bx1_ch1.addStretch()
+        box1_layout = QVBoxLayout()
+        box1_layout.addLayout(lang_xlsx_layout_bx1_ch1)
+        box1_layout.addWidget(label_ref_txt_string_filename)
+        box1_layout.addWidget(label_ref_txt_string_v_date)
+
+
+        label_head_bx2_ch1 = QLabel("Heading:")
+        tbx_head_bx2_ch1 = QLineEdit()
+        tbx_head_bx2_ch1.setReadOnly(True)
+        tbx_head_bx2_ch1.setFixedWidth(250)
+        tbx_head_bx2_ch1.setFixedHeight(35)
+        label_head_bx2_ch2 = QLabel("Heading:")
+        tbx_head_bx2_ch2 = QLineEdit()
+        tbx_head_bx2_ch2.setReadOnly(True)
+        tbx_head_bx2_ch2.setFixedWidth(250)
+        tbx_head_bx2_ch2.setFixedHeight(45)
+        lang_xlsx_layout_bx2_ch1 = QHBoxLayout()
+        lang_xlsx_layout_bx2_ch1.addWidget(label_head_bx2_ch1, alignment=Qt.AlignLeft)
+        lang_xlsx_layout_bx2_ch1.addWidget(tbx_head_bx2_ch1, alignment=Qt.AlignLeft)
+        lang_xlsx_layout_bx2_ch1.addStretch()
+        lang_xlsx_layout_bx2_ch2 = QHBoxLayout()
+        lang_xlsx_layout_bx2_ch2.addWidget(label_head_bx2_ch2, alignment=Qt.AlignLeft)
+        lang_xlsx_layout_bx2_ch2.addWidget(tbx_head_bx2_ch2, alignment=Qt.AlignLeft)
+        lang_xlsx_layout_bx2_ch2.addStretch()
+        box2_layout = QVBoxLayout()
+        box2_layout.addLayout(lang_xlsx_layout_bx2_ch1)
+        box2_layout.addLayout(lang_xlsx_layout_bx2_ch2)
+
+
+        fail_btn = QPushButton("Fail")
+        fail_btn.setStyleSheet("background-color: red; color: white;")
+        fail_btn.setFixedWidth(125)
+        fail_btn.setFixedHeight(50)
+        pass_btn = QPushButton("Pass")
+        pass_btn.setStyleSheet("background-color: green; color: white;")
+        pass_btn.setFixedWidth(125)
+        pass_btn.setFixedHeight(50)
+        box3_layout = QHBoxLayout()
+        box3_layout.addWidget(fail_btn, alignment=Qt.AlignRight | Qt.AlignBottom)
+        box3_layout.addWidget(pass_btn, alignment=Qt.AlignRight | Qt.AlignBottom)
+
+
+        lang_xlsx_layout_base.addLayout(box1_layout, )
+        lang_xlsx_layout_base.addLayout(box2_layout)
+        lang_xlsx_layout_base.addLayout(box3_layout)
+        # lang_xlsx_layout_base.addStretch()
 
         main_layout = QVBoxLayout(self)
         main_layout.addLayout(label_layout)
@@ -96,16 +192,27 @@ class ImageCompareViewer(QWidget):
         main_layout.addLayout(txt_path_layout)
         main_layout.addLayout(img_layout)
         main_layout.addLayout(btn_layout)
+        main_layout.addLayout(lang_xlsx_layout_base)
+
+    def choose_ref_text_xlsx_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select XLSX File", "", "Excel Files (*.xlsx)")
+        if file_path:
+            self.load_string_language_xls(file_path)
 
     def choose_evidence_folder(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Evidence Folder", "")
         if folder_path:
+            self.btn_choot_folder_evd.setText("Loading...")
             self.btn_choot_folder_evd.setEnabled(False)
             self.settingCnfProvider.is_mamual_photo_evidence_path = True
             self.settingCnfProvider.photo_evidence_path = folder_path
             self.evidence_alias_mapping_dict = self.settingCnfProvider.read_evidence_mapping_config(is_from_folder=True)
             self.index = None
+            self.evidence_select_path.setText(folder_path)
+        self.btn_choot_folder_evd.setText("Choose Evidence Folder")
         self.btn_choot_folder_evd.setEnabled(True)
+        self.clear_all_components_value()
+
 
     def load_images(self, ref_pic_path=None, evidence_pic_path=None):
         self.view_ref.set_image(ref_pic_path)
@@ -121,7 +228,7 @@ class ImageCompareViewer(QWidget):
             return
         self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef 
 
-        self.label_index.setText(f"Index: {self.index} / {len(self.evidence_alias_mapping_dict)-1}")
+        self.picture_number.setText(f"Pic Number: {self.index + 1} / {len(self.evidence_alias_mapping_dict)}")
         ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
         evidence_pic_path = picPropEvidence.full_path if picPropEvidence else None
         self.tbx_path_ref.setText(ref_pic_path if ref_pic_path else "")
@@ -140,7 +247,7 @@ class ImageCompareViewer(QWidget):
         if not picPropEvidence:
             return
         self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef 
-        self.label_index.setText(f"Index: {self.index} / {len(self.evidence_alias_mapping_dict)-1}")
+        self.picture_number.setText(f"Pic Number: {self.index + 1} / {len(self.evidence_alias_mapping_dict)}")
         ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
         evidence_pic_path = picPropEvidence.full_path if picPropEvidence else None
         self.tbx_path_ref.setText(ref_pic_path if ref_pic_path else "")
@@ -148,4 +255,31 @@ class ImageCompareViewer(QWidget):
         self.tbx_alias_ref.setText(self.picPropRef.alias if self.picPropRef else "")
         self.tbx_alias_evidence.setText(picPropEvidence.alias if picPropEvidence else "")
         self.load_images(ref_pic_path, evidence_pic_path)
+
+
+    
+    def load_string_language_xls(self, file_path):        
+        df_head = pd.read_excel(file_path, sheet_name=SHEET_HEAD)
+        df_para = pd.read_excel(file_path, sheet_name=SHEET_PARA)
+        def __read_data(df, target_dict):
+            col_index_dict = dict()    
+            for index, row in df.iterrows():
+                if index == 0:
+                    for col_idx, col in enumerate(df.columns):
+                        col_index_dict[col_idx] = col
+                elif index > 0:
+                    # text_string_compare = StringCompareSlsx()
+                    image_ref_name = ""
+                    for col_idx, cell_value in enumerate(row):
+                        if col_idx == 0:
+                            image_ref_name = str(cell_value).split(".")[0] if pd.notna(cell_value) else ""
+                            if image_ref_name not in target_dict:
+                                target_dict[image_ref_name] = dict()
+                            continue
+                        language = col_index_dict.get(col_idx, f"Language_{col_idx}")
+                        target_dict[image_ref_name][language] = cell_value                    
+        __read_data(df_head, self.header_string_lang_dict)
+        __read_data(df_para, self.para_string_lang_dict)
+
+        return 
 
