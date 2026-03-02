@@ -120,8 +120,8 @@ class ImageCompareViewer(QWidget):
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
         # btn_layout.setAlignment(Qt.AlignBottom)
-        # btn_layout.addWidget(self.txt_set_index)
-        # btn_layout.addWidget(self.cb_fixed_picref)
+        btn_layout.addWidget(self.txt_set_index)
+        btn_layout.addWidget(self.cb_fixed_picref)
         btn_layout.addWidget(self.picture_number)
         btn_layout.addWidget(self.back_btn)
         btn_layout.addWidget(self.next_btn)
@@ -157,15 +157,7 @@ class ImageCompareViewer(QWidget):
         self.tbx_head_bx2_ch1.setFixedHeight(70)
         self.tbx_para_bx2_ch2 = QTextEdit(self)
         self.tbx_para_bx2_ch2.setPlaceholderText("Paragraph...")
-        self.tbx_para_bx2_ch2.setText("ABC\n" \
-        "XXX\n" \
-        "ZZZ\n" \
-        "HHHH\n" \
-        "VVVV\n" \
-        "OOOO\n" \
-        "PPP\n" \
-        "QQQ\n" \
-        "EEE\n")
+        self.tbx_para_bx2_ch2.setText("")
 
         self.tbx_para_bx2_ch2.setReadOnly(True)
         self.tbx_para_bx2_ch2.setFixedWidth(400)
@@ -218,10 +210,10 @@ class ImageCompareViewer(QWidget):
         if file_path:
             self.load_string_language_xls(file_path)
 
-    def choose_evidence_folder(self):
+    def choose_evidence_folder(self):        
+        self.btn_choot_folder_evd.setText("Loading...")
         folder_path = QFileDialog.getExistingDirectory(self, "Select Evidence Folder", "")
         if folder_path:
-            self.btn_choot_folder_evd.setText("Loading...")
             self.btn_choot_folder_evd.setEnabled(False)
             self.settingCnfProvider.is_mamual_photo_evidence_path = True
             self.settingCnfProvider.photo_evidence_path = folder_path
