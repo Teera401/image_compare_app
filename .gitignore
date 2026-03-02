@@ -29,3 +29,4 @@ conf/language_mapping.csv
 conf/modify_alias_mapping copy.csv
 conf/org_alias_mapping.csv
 conf/ref_pic_mapping.csv
+modules/__pycache__/*

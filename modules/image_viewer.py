@@ -84,6 +84,23 @@ class ImageCompareViewer(QWidget):
         txt_path_layout.addWidget(QLabel("Path Evidence:"))
         txt_path_layout.addWidget(self.tbx_path_evidence)
 
+
+        eviden_resource_layout = QHBoxLayout()
+        label_ref = QLabel("Reference")
+        self.btn_choot_folder_evd = QPushButton("Choose Evidence Folder")
+        self.btn_choot_folder_evd.setFixedHeight(40)
+        self.btn_choot_folder_evd.setFixedWidth(150)
+        self.btn_choot_folder_evd.setStyleSheet("background-color: lightgreen;")
+        self.btn_choot_folder_evd.clicked.connect(self.choose_evidence_folder)
+        self.evidence_select_path = QLineEdit()
+        self.evidence_select_path.setReadOnly(True)
+        self.evidence_select_path.setFixedHeight(40)
+        self.evidence_select_path.setFixedWidth(250)
+        # eviden_resource_layout.addWidget(label_ref)
+        # eviden_resource_layout.addWidget(self.evidence_select_path)
+        # eviden_resource_layout.addWidget(self.btn_choot_folder_evd)
+
+
         text_alias_layout = QHBoxLayout()
         self.tbx_alias_ref = QLineEdit()
         self.tbx_alias_evidence = QLineEdit()
@@ -91,14 +108,14 @@ class ImageCompareViewer(QWidget):
         text_alias_layout.addWidget(self.tbx_alias_ref)
         text_alias_layout.addWidget(QLabel("Alias Evidence:"))
         text_alias_layout.addWidget(self.tbx_alias_evidence)
+        text_alias_layout.addWidget(label_ref)
+        text_alias_layout.addWidget(self.evidence_select_path)
+        text_alias_layout.addWidget(self.btn_choot_folder_evd)
         text_alias_layout.addStretch()
   
         img_layout = QHBoxLayout()
         img_layout.addWidget(self.view_ref)
         img_layout.addWidget(self.view_evidence)
-
-
-
 
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
@@ -114,12 +131,12 @@ class ImageCompareViewer(QWidget):
         label_ref_txt = QLabel("Referent Text String:")
         self.label_xlsx_file_ver = QLabel("Version Date: ---")
         self.ref_txt_xlsx_file = QLineEdit()
-        self.ref_txt_xlsx_file.setFixedWidth(150)
+        self.ref_txt_xlsx_file.setFixedWidth(125)
         self.ref_txt_xlsx_file.setFixedHeight(40)  
         self.ref_txt_xlsx_file.setReadOnly(True)
         self.ref_choose_btn = QPushButton("Choose XLSX File")
         self.ref_choose_btn.setStyleSheet("background-color: lightgreen;")
-        self.ref_choose_btn.setFixedWidth(150)
+        self.ref_choose_btn.setFixedWidth(100)
         self.ref_choose_btn.setFixedHeight(40)
         lang_xlsx_layout_bx1_ch1 = QHBoxLayout()
         self.ref_choose_btn.clicked.connect(self.choose_ref_text_xlsx_file)
@@ -128,21 +145,31 @@ class ImageCompareViewer(QWidget):
         lang_xlsx_layout_bx1_ch1.addWidget(self.ref_choose_btn, alignment=Qt.AlignLeft)
         lang_xlsx_layout_bx1_ch1.addStretch()
         box1_layout = QVBoxLayout()
-        box1_layout.setAlignment(Qt.AlignBottom)
+        box1_layout.setAlignment(Qt.AlignTop)
         box1_layout.addLayout(lang_xlsx_layout_bx1_ch1)
         box1_layout.addWidget(self.label_xlsx_file_ver)
         # box1_layout.addStretch()
 
-        self.tbx_head_bx2_ch1 = QLineEdit()
+        self.tbx_head_bx2_ch1 = QTextEdit()
         self.tbx_head_bx2_ch1.setPlaceholderText("Heading...")
         self.tbx_head_bx2_ch1.setReadOnly(True)
-        self.tbx_head_bx2_ch1.setFixedWidth(300)
-        self.tbx_head_bx2_ch1.setFixedHeight(40)
+        self.tbx_head_bx2_ch1.setFixedWidth(250)
+        self.tbx_head_bx2_ch1.setFixedHeight(70)
         self.tbx_para_bx2_ch2 = QTextEdit(self)
         self.tbx_para_bx2_ch2.setPlaceholderText("Paragraph...")
+        self.tbx_para_bx2_ch2.setText("ABC\n" \
+        "XXX\n" \
+        "ZZZ\n" \
+        "HHHH\n" \
+        "VVVV\n" \
+        "OOOO\n" \
+        "PPP\n" \
+        "QQQ\n" \
+        "EEE\n")
+
         self.tbx_para_bx2_ch2.setReadOnly(True)
-        self.tbx_para_bx2_ch2.setFixedWidth(500)
-        self.tbx_para_bx2_ch2.setFixedHeight(100)
+        self.tbx_para_bx2_ch2.setFixedWidth(400)
+        self.tbx_para_bx2_ch2.setFixedHeight(70)
 
 
         new_layout = QHBoxLayout()
@@ -151,25 +178,7 @@ class ImageCompareViewer(QWidget):
         new_layout.addStretch()
 
         box2_layout = QVBoxLayout()
-        box2_layout.setAlignment(Qt.AlignBottom)
         box2_layout.addLayout(new_layout)
-
-                # Layouts Label
-        eviden_resource_layout = QHBoxLayout()
-        label_ref = QLabel("Reference")
-        self.btn_choot_folder_evd = QPushButton("Choose Evidence Folder")
-        self.btn_choot_folder_evd.setFixedHeight(40)
-        self.btn_choot_folder_evd.setFixedWidth(150)
-        self.btn_choot_folder_evd.setStyleSheet("background-color: lightgreen;")
-        self.btn_choot_folder_evd.clicked.connect(self.choose_evidence_folder)
-        self.evidence_select_path = QLineEdit()
-        self.evidence_select_path.setReadOnly(True)
-        self.evidence_select_path.setFixedHeight(40)
-        self.evidence_select_path.setFixedWidth(250)
-        eviden_resource_layout.addWidget(label_ref)
-        eviden_resource_layout.addWidget(self.evidence_select_path)
-        eviden_resource_layout.addWidget(self.btn_choot_folder_evd)
-        # eviden_resource_layout.addStretch()
 
         pass_fail_layout = QHBoxLayout()
         fail_btn = QPushButton("Fail")
@@ -196,9 +205,6 @@ class ImageCompareViewer(QWidget):
         buttom_layout_base_0.addLayout(box2_layout)
         buttom_layout_base_0.addLayout(box3_layout)
         buttom_layout_base_0.addStretch()
-
-
-
 
         main_layout = QVBoxLayout(self)
         main_layout.addLayout(text_alias_layout)
