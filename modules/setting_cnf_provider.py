@@ -146,9 +146,9 @@ class SettingCnfProvider:
         evidence_alias_mapping_dict = dict(sorted(evidence_alias_mapping_dict.items(), key=lambda item: item[0]))
         return evidence_alias_mapping_dict  
     
-    def read_text_string_compare_data(self):
-        text_string_compare_data = StringCompareSlsx.load_data_xls(self.text_string_compare_file)
-        return text_string_compare_data
+    # def read_text_string_compare_data(self):
+    #     text_string_compare_data = StringCompareSlsx.load_data_xls(self.text_string_compare_file)
+    #     return text_string_compare_data
     
     
 
