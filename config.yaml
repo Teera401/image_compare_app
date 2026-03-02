@@ -6,4 +6,4 @@ photo_evidence_directory: "photo_evidence"
 
 text_string_compare_file: "C:\\Users\\tdc123admin\\Tools\\image_compare_app\\conf\\Text_String_compare_verECG_vs_ver17LGs.xlsx"
 
-move_to_path: "C:\\Users\\tdc123admin\\Tools"
+destination_dir_passfail: "C:\\Users\\tdc123admin\\Tools"

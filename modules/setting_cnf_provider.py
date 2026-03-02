@@ -22,6 +22,7 @@ class SettingCnfProvider:
             self.photo_evidence_directory = config.get("photo_evidence_directory")
             self.language_all_testcase_path = config.get("language_all_testcase_path")
             self.text_string_compare_file = config.get("text_string_compare_file")
+            self.destination_dir_passfail = config.get("destination_dir_passfail")
             self.is_mamual_photo_evidence_path = False
   
     

@@ -1,15 +1,17 @@
 from datetime import datetime
 import os
+import shutil
 import pandas as pd
 
 from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QLineEdit, QPlainTextEdit, QTextEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
 from PySide6.QtGui import QPalette, Qt
+from trio import Path
 import yaml
 from PySide6.QtWidgets import QFileDialog
 from modules.pic_prop_evidence import PicPropEvidence
 from modules.setting_cnf_provider import SettingCnfProvider
 from modules.zoomable_view import ZoomableImageView
-
+from datetime import datetime
     
 CONFIG_FILE = "config.yaml"
 SHEET_HEAD = 'Head-New'
@@ -153,14 +155,14 @@ class ImageCompareViewer(QWidget):
         self.tbx_head_bx2_ch1 = QTextEdit()
         self.tbx_head_bx2_ch1.setPlaceholderText("Heading...")
         self.tbx_head_bx2_ch1.setReadOnly(True)
-        self.tbx_head_bx2_ch1.setFixedWidth(250)
+        self.tbx_head_bx2_ch1.setFixedWidth(200)
         self.tbx_head_bx2_ch1.setFixedHeight(70)
         self.tbx_para_bx2_ch2 = QTextEdit(self)
         self.tbx_para_bx2_ch2.setPlaceholderText("Paragraph...")
         self.tbx_para_bx2_ch2.setText("")
 
         self.tbx_para_bx2_ch2.setReadOnly(True)
-        self.tbx_para_bx2_ch2.setFixedWidth(400)
+        self.tbx_para_bx2_ch2.setFixedWidth(300)
         self.tbx_para_bx2_ch2.setFixedHeight(70)
 
 
@@ -173,22 +175,24 @@ class ImageCompareViewer(QWidget):
         box2_layout.addLayout(new_layout)
 
         pass_fail_layout = QHBoxLayout()
-        fail_btn = QPushButton("Fail")
-        fail_btn.setStyleSheet("background-color: gray; color: white;")
-        fail_btn.setFixedWidth(125)
-        fail_btn.setFixedHeight(50)
-        pass_btn = QPushButton("Pass")
-        pass_btn.setStyleSheet("background-color: gray; color: white;")
-        pass_btn.setFixedWidth(125)
-        pass_btn.setFixedHeight(50)
-        pass_fail_layout.addWidget(fail_btn, alignment=Qt.AlignRight)
-        pass_fail_layout.addWidget(pass_btn, alignment=Qt.AlignRight)
+        self.fail_btn = QPushButton("Fail")
+        self.fail_btn.setStyleSheet("background-color: red; color: white;")
+        self.fail_btn.clicked.connect(lambda:self.passfail_movefolder("fail"))
+        self.fail_btn.setFixedWidth(75)
+        self.fail_btn.setFixedHeight(40)
+        self.pass_btn = QPushButton("Pass")
+        self.pass_btn.setStyleSheet("background-color: green; color: white;")
+        self.pass_btn.clicked.connect(lambda:self.passfail_movefolder("pass"))
+        self.pass_btn.setFixedWidth(75)
+        self.pass_btn.setFixedHeight(40)
+        pass_fail_layout.addWidget(self.fail_btn, alignment=Qt.AlignRight)
+        pass_fail_layout.addWidget(self.pass_btn, alignment=Qt.AlignRight)
         pass_fail_layout.addStretch()
 
         box3_layout = QVBoxLayout()
         box3_layout.setAlignment(Qt.AlignBottom | Qt.AlignRight)
         box3_layout.addLayout(eviden_resource_layout)
-        # box3_layout.addLayout(pass_fail_layout)
+        box3_layout.addLayout(pass_fail_layout)
 
 
         buttom_layout_base_0 = QHBoxLayout()
@@ -205,6 +209,28 @@ class ImageCompareViewer(QWidget):
         main_layout.addLayout(btn_layout)
         main_layout.addLayout(buttom_layout_base_0)
 
+
+
+    def passfail_movefolder(self, status):
+        if "pass" == status:
+            self.pass_btn.setText("Move...") 
+        else:
+            self.fail_btn.setText("Move...")
+        now = datetime.now()
+        current_timestamp = now.timestamp()     
+        tar_get = os.path.join(self.settingCnfProvider.destination_dir_passfail, status)       
+        source_path = self.settingCnfProvider.photo_evidence_path
+        file_name = os.path.basename(source_path)
+        parent_path = str(Path(source_path).parent)
+        copy_backup =  os.path.join(parent_path, f'_{current_timestamp}_{file_name}')
+        try:
+            shutil.copytree(source_path, copy_backup)  
+            shutil.move(source_path, tar_get)
+        except:
+            pass
+        self.pass_btn.setText("Pass")
+        self.fail_btn.setText("Fail")
+
     def choose_ref_text_xlsx_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select XLSX File", "", "Excel Files (*.xlsx)")
         if file_path:
@@ -212,14 +238,14 @@ class ImageCompareViewer(QWidget):
 
     def choose_evidence_folder(self):        
         self.btn_choot_folder_evd.setText("Loading...")
-        folder_path = QFileDialog.getExistingDirectory(self, "Select Evidence Folder", "")
-        if folder_path:
+        folder_path_evidence = QFileDialog.getExistingDirectory(self, "Select Evidence Folder", "")
+        if folder_path_evidence:
             self.btn_choot_folder_evd.setEnabled(False)
             self.settingCnfProvider.is_mamual_photo_evidence_path = True
-            self.settingCnfProvider.photo_evidence_path = folder_path
+            self.settingCnfProvider.photo_evidence_path = folder_path_evidence
             self.evidence_alias_mapping_dict = self.settingCnfProvider.read_evidence_mapping_config(is_from_folder=True)
             self.index = None
-            self.evidence_select_path.setText(folder_path)
+            self.evidence_select_path.setText(folder_path_evidence)
         self.btn_choot_folder_evd.setText("Choose Evidence Folder")
         self.btn_choot_folder_evd.setEnabled(True)
         self.clear_all_components_value()
