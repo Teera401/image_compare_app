@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import pandas as pd
 
-from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QLineEdit, QTextEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QLineEdit, QPlainTextEdit, QTextEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
 from PySide6.QtGui import QPalette, Qt
 import yaml
 from PySide6.QtWidgets import QFileDialog
@@ -128,31 +128,42 @@ class ImageCompareViewer(QWidget):
         lang_xlsx_layout_bx1_ch1.addWidget(self.ref_choose_btn, alignment=Qt.AlignLeft)
         lang_xlsx_layout_bx1_ch1.addStretch()
         box1_layout = QVBoxLayout()
+        box1_layout.setAlignment(Qt.AlignBottom)
         box1_layout.addLayout(lang_xlsx_layout_bx1_ch1)
         box1_layout.addWidget(self.label_xlsx_file_ver)
         # box1_layout.addStretch()
 
-        label_head_bx2_ch1 = QLabel("Heading:")
-        self.tbx_head_bx2_ch1 = QTextEdit()
+        
+        # label_head_bx2_ch1 = QLabel("Heading:")
+        self.tbx_head_bx2_ch1 = QLineEdit()
+        self.tbx_head_bx2_ch1.setPlaceholderText("Heading...")
         self.tbx_head_bx2_ch1.setReadOnly(True)
-        self.tbx_head_bx2_ch1.setFixedWidth(350)
+        self.tbx_head_bx2_ch1.setFixedWidth(300)
         self.tbx_head_bx2_ch1.setFixedHeight(40)
-        label_para_bx2_ch2 = QLabel("Paragraph:")
-        self.tbx_para_bx2_ch2 = QTextEdit()
+        # label_para_bx2_ch2 = QLabel("Paragraph:")
+        self.tbx_para_bx2_ch2 = QTextEdit(self)
+        self.tbx_para_bx2_ch2.setPlaceholderText("Paragraph...")
         self.tbx_para_bx2_ch2.setReadOnly(True)
-        self.tbx_para_bx2_ch2.setFixedWidth(350)
-        self.tbx_para_bx2_ch2.setFixedHeight(70)
-        lang_xlsx_layout_bx2_ch1 = QHBoxLayout()
-        lang_xlsx_layout_bx2_ch1.addWidget(label_head_bx2_ch1, alignment=Qt.AlignLeft)
-        lang_xlsx_layout_bx2_ch1.addWidget(self.tbx_head_bx2_ch1, alignment=Qt.AlignRight)
-        lang_xlsx_layout_bx2_ch1.addStretch()
-        lang_xlsx_layout_bx2_ch2 = QHBoxLayout()
-        lang_xlsx_layout_bx2_ch2.addWidget(label_para_bx2_ch2, alignment=Qt.AlignLeft)
-        lang_xlsx_layout_bx2_ch2.addWidget(self.tbx_para_bx2_ch2, alignment=Qt.AlignRight)
-        lang_xlsx_layout_bx2_ch2.addStretch()
+        self.tbx_para_bx2_ch2.setFixedWidth(500)
+        self.tbx_para_bx2_ch2.setFixedHeight(100)
+        # lang_xlsx_layout_bx2_ch1 = QHBoxLayout()
+        # lang_xlsx_layout_bx2_ch1.addWidget(label_head_bx2_ch1, alignment=Qt.AlignLeft)
+        # lang_xlsx_layout_bx2_ch1.addWidget(self.tbx_head_bx2_ch1)
+        # lang_xlsx_layout_bx2_ch1.addStretch()
+        # lang_xlsx_layout_bx2_ch2 = QHBoxLayout()
+        # lang_xlsx_layout_bx2_ch2.addWidget(label_para_bx2_ch2, alignment=Qt.AlignLeft)
+        # lang_xlsx_layout_bx2_ch2.addWidget(self.tbx_para_bx2_ch2)
+        # lang_xlsx_layout_bx2_ch2.addStretch()
+
+        new_layout = QHBoxLayout()
+        new_layout.addWidget(self.tbx_head_bx2_ch1, alignment=Qt.AlignLeft | Qt.AlignTop)
+        new_layout.addWidget(self.tbx_para_bx2_ch2, alignment=Qt.AlignLeft | Qt.AlignTop)
+        new_layout.addStretch()
+
         box2_layout = QVBoxLayout()
-        box2_layout.addLayout(lang_xlsx_layout_bx2_ch1)
-        box2_layout.addLayout(lang_xlsx_layout_bx2_ch2)
+        box2_layout.setAlignment(Qt.AlignBottom)
+        box2_layout.addLayout(new_layout)
+        # box2_layout.addLayout(lang_xlsx_layout_bx2_ch2)
         # box2_layout.addStretch()
 
 
@@ -182,15 +193,16 @@ class ImageCompareViewer(QWidget):
         pass_btn.setStyleSheet("background-color: gray; color: white;")
         pass_btn.setFixedWidth(125)
         pass_btn.setFixedHeight(50)
-        pass_fail_layout.addWidget(fail_btn)
-        pass_fail_layout.addWidget(pass_btn)
+        pass_fail_layout.addWidget(fail_btn, alignment=Qt.AlignRight)
+        pass_fail_layout.addWidget(pass_btn, alignment=Qt.AlignRight)
         pass_fail_layout.addStretch()
 
         box3_layout = QVBoxLayout()
-        box3_layout.setAlignment(Qt.AlignBottom)
+        box3_layout.setAlignment(Qt.AlignBottom | Qt.AlignRight)
         box3_layout.addLayout(eviden_resource_layout)
         box3_layout.addLayout(pass_fail_layout)
         # box3_layout.addStretch()
+
 
         buttom_layout_base_0 = QHBoxLayout()
         buttom_layout_base_0.setAlignment(Qt.AlignBottom)
@@ -198,6 +210,9 @@ class ImageCompareViewer(QWidget):
         buttom_layout_base_0.addLayout(box2_layout)
         buttom_layout_base_0.addLayout(box3_layout)
         buttom_layout_base_0.addStretch()
+
+
+
 
         main_layout = QVBoxLayout(self)
         main_layout.addLayout(text_alias_layout)

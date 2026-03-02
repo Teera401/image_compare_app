@@ -1,2 +1,31 @@
 modules/__pycache__/*
 conf/*.csv
+conf/ref_pic_mapping.csv
+conf/alias_mapping.csv
+conf/backup_alias_mapping.csv
+conf/evidence_pic_mapping.csv
+conf/language_mapping.csv
+conf/modify_alias_mapping copy.csv
+conf/org_alias_mapping.csv
+conf/ref_pic_mapping.csv
+conf/backup/__pic_mapping copy.csv
+conf/backup/__picture_ref_mapping.csv
+conf/backup/alias_mapping.csv
+conf/backup/backup_alias_mapping.csv
+conf/backup/evidence_pic_mapping.csv
+conf/backup/language_mapping.csv
+conf/backup/modify_alias_mapping copy.csv
+conf/backup/org_alias_mapping.csv
+conf/backup/ref_pic_mapping.csv
+conf/backup/Text_String_compare_verECG_vs_ver17LGs.xlsx
+conf/__picture_ref_mapping.csv
+conf/__pic_mapping copy.csv
+conf/__pic_mapping copy.csv
+conf/__picture_ref_mapping.csv
+conf/alias_mapping.csv
+conf/backup_alias_mapping.csv
+conf/evidence_pic_mapping.csv
+conf/language_mapping.csv
+conf/modify_alias_mapping copy.csv
+conf/org_alias_mapping.csv
+conf/ref_pic_mapping.csv
