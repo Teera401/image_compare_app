@@ -114,7 +114,7 @@ class ImageCompareViewer(QWidget):
         label_ref_txt = QLabel("Referent Text String:")
         self.label_xlsx_file_ver = QLabel("Version Date: ---")
         self.ref_txt_xlsx_file = QLineEdit()
-        self.ref_txt_xlsx_file.setFixedWidth(300)
+        self.ref_txt_xlsx_file.setFixedWidth(150)
         self.ref_txt_xlsx_file.setFixedHeight(40)  
         self.ref_txt_xlsx_file.setReadOnly(True)
         self.ref_choose_btn = QPushButton("Choose XLSX File")
@@ -133,27 +133,17 @@ class ImageCompareViewer(QWidget):
         box1_layout.addWidget(self.label_xlsx_file_ver)
         # box1_layout.addStretch()
 
-        
-        # label_head_bx2_ch1 = QLabel("Heading:")
         self.tbx_head_bx2_ch1 = QLineEdit()
         self.tbx_head_bx2_ch1.setPlaceholderText("Heading...")
         self.tbx_head_bx2_ch1.setReadOnly(True)
         self.tbx_head_bx2_ch1.setFixedWidth(300)
         self.tbx_head_bx2_ch1.setFixedHeight(40)
-        # label_para_bx2_ch2 = QLabel("Paragraph:")
         self.tbx_para_bx2_ch2 = QTextEdit(self)
         self.tbx_para_bx2_ch2.setPlaceholderText("Paragraph...")
         self.tbx_para_bx2_ch2.setReadOnly(True)
         self.tbx_para_bx2_ch2.setFixedWidth(500)
         self.tbx_para_bx2_ch2.setFixedHeight(100)
-        # lang_xlsx_layout_bx2_ch1 = QHBoxLayout()
-        # lang_xlsx_layout_bx2_ch1.addWidget(label_head_bx2_ch1, alignment=Qt.AlignLeft)
-        # lang_xlsx_layout_bx2_ch1.addWidget(self.tbx_head_bx2_ch1)
-        # lang_xlsx_layout_bx2_ch1.addStretch()
-        # lang_xlsx_layout_bx2_ch2 = QHBoxLayout()
-        # lang_xlsx_layout_bx2_ch2.addWidget(label_para_bx2_ch2, alignment=Qt.AlignLeft)
-        # lang_xlsx_layout_bx2_ch2.addWidget(self.tbx_para_bx2_ch2)
-        # lang_xlsx_layout_bx2_ch2.addStretch()
+
 
         new_layout = QHBoxLayout()
         new_layout.addWidget(self.tbx_head_bx2_ch1, alignment=Qt.AlignLeft | Qt.AlignTop)
@@ -163,9 +153,6 @@ class ImageCompareViewer(QWidget):
         box2_layout = QVBoxLayout()
         box2_layout.setAlignment(Qt.AlignBottom)
         box2_layout.addLayout(new_layout)
-        # box2_layout.addLayout(lang_xlsx_layout_bx2_ch2)
-        # box2_layout.addStretch()
-
 
                 # Layouts Label
         eviden_resource_layout = QHBoxLayout()
@@ -182,7 +169,7 @@ class ImageCompareViewer(QWidget):
         eviden_resource_layout.addWidget(label_ref)
         eviden_resource_layout.addWidget(self.evidence_select_path)
         eviden_resource_layout.addWidget(self.btn_choot_folder_evd)
-        eviden_resource_layout.addStretch()
+        # eviden_resource_layout.addStretch()
 
         pass_fail_layout = QHBoxLayout()
         fail_btn = QPushButton("Fail")
@@ -200,8 +187,7 @@ class ImageCompareViewer(QWidget):
         box3_layout = QVBoxLayout()
         box3_layout.setAlignment(Qt.AlignBottom | Qt.AlignRight)
         box3_layout.addLayout(eviden_resource_layout)
-        box3_layout.addLayout(pass_fail_layout)
-        # box3_layout.addStretch()
+        # box3_layout.addLayout(pass_fail_layout)
 
 
         buttom_layout_base_0 = QHBoxLayout()
