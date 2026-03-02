@@ -9,8 +9,8 @@ class ZoomableImageView(QGraphicsView):
 
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
-
         self.pixmap_item = QGraphicsPixmapItem()
+        
         self.scene.addItem(self.pixmap_item)
 
         # self.setRenderHints(self.renderHints() | Qt.SmoothTransformation)
@@ -19,6 +19,7 @@ class ZoomableImageView(QGraphicsView):
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
 
         self.setDragMode(QGraphicsView.ScrollHandDrag)
+        
         self.zoom_factor = 1.25
 
     def set_image(self, image_path):

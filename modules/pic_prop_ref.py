@@ -1,3 +1,4 @@
+import os
 import re
 
 class PicPropRef:
@@ -7,8 +8,9 @@ class PicPropRef:
         aliastmp = re.sub(r'[^a-zA-Z0-9_,]', '', (alias.split(".")[0])) if alias else None
         self.alias = aliastmp.lower() if aliastmp else None
         self.full_path = full_path
+        self.pic_name_without_exten = (os.path.basename(full_path).split(".")[0]) if full_path else None
         self.hash_value = "" #self.__calculate_hash() if full_path else None
-
+   
     def __calculate_hash(self):
         import hashlib
         hash_md5 = hashlib.md5()
