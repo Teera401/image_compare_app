@@ -3,7 +3,7 @@ import os
 import shutil
 import pandas as pd
 
-from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QLineEdit, QPlainTextEdit, QTextEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QLineEdit, QMessageBox, QPlainTextEdit, QTextEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
 from PySide6.QtGui import QPalette, Qt
 from trio import Path
 import yaml
@@ -12,7 +12,8 @@ from modules.pic_prop_evidence import PicPropEvidence
 from modules.setting_cnf_provider import SettingCnfProvider
 from modules.zoomable_view import ZoomableImageView
 from datetime import datetime
-    
+from PySide6.QtCore import QDate
+
 CONFIG_FILE = "config.yaml"
 SHEET_HEAD = 'Head-New'
 SHEET_PARA = 'Para-New'
@@ -30,7 +31,8 @@ class ImageCompareViewer(QWidget):
         self.header_string_lang_dict = dict()
         self.para_string_lang_dict = dict()
         # self.load_string_language_xls(self.settingCnfProvider.text_string_compare_file)
-
+        self.evidence_pic_path_last = None
+        
     def set_index(self):
         try:
             idx = int(self.txt_set_index.text())
@@ -212,24 +214,42 @@ class ImageCompareViewer(QWidget):
 
 
     def passfail_movefolder(self, status):
-        if "pass" == status:
-            self.pass_btn.setText("Move...") 
+        if self.evidence_pic_path_last != None:
+            self.pass_btn.setText("Move...")  if "pass" == status else self.fail_btn.setText("Move...")
+            current_date = QDate.currentDate()
+            formatted = current_date.toString("yyyyMMdd")
+
+            tar_get = os.path.join(self.settingCnfProvider.destination_dir_passfail, status)       
+            # source_path = self.settingCnfProvider.photo_evidence_path
+            
+            parent_path = str(Path(self.evidence_pic_path_last).parent.parent)
+            folder_name_backup = f'_{formatted}_{os.path.basename(parent_path)}'
+            copy_backup =  f'{os.path.join(str(Path(parent_path).parent), folder_name_backup)}'
+
+            try:
+                shutil.copytree(parent_path, copy_backup)
+            except:
+                self.show_dialog("Can not backup evidence folder", QMessageBox.Critical)
+            try:
+                shutil.move(parent_path, tar_get)
+            except:
+                self.show_dialog("Can not move evidence folder", QMessageBox.Critical)
+
         else:
-            self.fail_btn.setText("Move...")
-        now = datetime.now()
-        current_timestamp = now.timestamp()     
-        tar_get = os.path.join(self.settingCnfProvider.destination_dir_passfail, status)       
-        source_path = self.settingCnfProvider.photo_evidence_path
-        file_name = os.path.basename(source_path)
-        parent_path = str(Path(source_path).parent)
-        copy_backup =  os.path.join(parent_path, f'_{current_timestamp}_{file_name}')
-        try:
-            shutil.copytree(source_path, copy_backup)  
-            shutil.move(source_path, tar_get)
-        except:
-            pass
+            self.show_dialog()
+                        
         self.pass_btn.setText("Pass")
         self.fail_btn.setText("Fail")
+    
+    
+    def show_dialog(self, msg="The evidence needs to be examined first.", btn_icon=QMessageBox.Information):
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Move Evidence Folder")
+        dlg.setText(msg)
+        dlg.setStandardButtons(QMessageBox.Ok) 
+        dlg.setIcon(btn_icon)
+        dlg.exec_()
+
 
     def choose_ref_text_xlsx_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select XLSX File", "", "Excel Files (*.xlsx)")
@@ -254,7 +274,8 @@ class ImageCompareViewer(QWidget):
     def load_images(self, ref_pic_path=None, evidence_pic_path=None):
         self.view_ref.set_image(ref_pic_path)
         self.view_evidence.set_image(evidence_pic_path)
-
+        if evidence_pic_path != None:
+            self.evidence_pic_path_last = evidence_pic_path
     def next_image(self):    
         self.tbx_head_bx2_ch1.setText("")
         self.tbx_para_bx2_ch2.setText("")    
