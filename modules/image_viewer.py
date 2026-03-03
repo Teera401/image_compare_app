@@ -121,6 +121,9 @@ class ImageCompareViewer(QWidget):
         img_layout.addWidget(self.view_ref)
         img_layout.addWidget(self.view_evidence)
 
+        self.state_move_evidence = QLabel()
+        self.state_move_evidence.setStyleSheet("background-color: rgb(204, 255, 204);")
+        self.state_move_evidence.setFixedWidth(70)
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
         # btn_layout.setAlignment(Qt.AlignBottom)
@@ -129,6 +132,7 @@ class ImageCompareViewer(QWidget):
         btn_layout.addWidget(self.picture_number)
         btn_layout.addWidget(self.back_btn)
         btn_layout.addWidget(self.next_btn)
+        btn_layout.addWidget(self.state_move_evidence)
         btn_layout.addStretch()
 
 
@@ -215,6 +219,7 @@ class ImageCompareViewer(QWidget):
 
     def passfail_movefolder(self, status):
         if self.evidence_pic_path_last != None:
+            self.state_move_evidence.setText("Processing...")
             self.pass_btn.setText("Move...")  if "pass" == status else self.fail_btn.setText("Move...")
             current_date = QDate.currentDate()
             formatted = current_date.toString("yyyyMMdd")
@@ -230,14 +235,19 @@ class ImageCompareViewer(QWidget):
                 shutil.copytree(parent_path, copy_backup)
             except:
                 self.show_dialog("Can not backup evidence folder", QMessageBox.Critical)
+                self.state_move_evidence.setText("Error!")
+                return
             try:
                 shutil.move(parent_path, tar_get)
             except:
                 self.show_dialog("Can not move evidence folder", QMessageBox.Critical)
+                self.state_move_evidence.setText("Error!")
+                return
 
         else:
             self.show_dialog()
-                        
+
+        self.state_move_evidence.setText("Done")
         self.pass_btn.setText("Pass")
         self.fail_btn.setText("Fail")
     
