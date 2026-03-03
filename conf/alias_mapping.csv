@@ -1,5 +1,5 @@
 Ref Alias,Evidence Alias,Evidence Alias 2,Evidence Alias 3
-adjustcontact,,,
+adjustcontact,adjust_contact_t,,
 adjustcontactl,Adjustcontactmismatch,,
 "adjustcontactl,r",Handheldselectionmismatch,,
 "adjustcontactl,r,t",Powermismatch,,
