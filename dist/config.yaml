@@ -1,0 +1,9 @@
+uiCheck_refer_path: "E:\\Dev Phase\\UI Check\\6.2.0\\_Reference\\Translations_screens(02-19-2026)"
+language_all_testcase_path: "E:\\Dev Phase\\VTP09"
+
+photo_evidence_path: "E:\\Dev Phase"
+photo_evidence_directory: "photo_evidence"
+
+text_string_compare_file: "C:\\Users\\tdc123admin\\Tools\\image_compare_app\\conf\\Text_String_compare_verECG_vs_ver17LGs.xlsx"
+
+destination_dir_passfail: "C:\\Users\\tdc123admin\\Tools"

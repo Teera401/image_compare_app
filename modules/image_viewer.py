@@ -17,6 +17,8 @@ from PySide6.QtCore import QDate
 CONFIG_FILE = "config.yaml"
 SHEET_HEAD = 'Head-New'
 SHEET_PARA = 'Para-New'
+VERSION = '1.0.0'
+DETAIL = 'Initial Version'
 
 class ImageCompareViewer(QWidget):
     def __init__(self):
@@ -56,7 +58,7 @@ class ImageCompareViewer(QWidget):
         self.tbx_para_bx2_ch2.setText("")
 
     def init_ui(self):
-        self.setWindowTitle("Image Compare (Zoom & Pan)")
+        self.setWindowTitle(f"Images Compare (Zoom & Pan) v{VERSION}")
         self.resize(1200, 600)
 
         self.picture_number = QLabel()
