@@ -118,7 +118,16 @@ class ImageCompareViewer(QWidget):
         text_alias_layout.addWidget(self.evidence_select_path)
         text_alias_layout.addWidget(self.btn_choot_folder_evd)
         text_alias_layout.addStretch()
-  
+        
+        show_lang_layout = QHBoxLayout()
+        self.tbx_lang = QLineEdit()
+        self.tbx_lang.setFixedWidth(200)
+        lang_label = QLabel("Language :")
+        # lang_label.setFixedWidth(200)
+        show_lang_layout.addWidget(lang_label, alignment=Qt.AlignLeft)
+        show_lang_layout.addWidget(self.tbx_lang, alignment=Qt.AlignLeft)
+        show_lang_layout.addStretch()
+
         img_layout = QHBoxLayout()
         img_layout.addWidget(self.view_ref)
         img_layout.addWidget(self.view_evidence)
@@ -212,6 +221,7 @@ class ImageCompareViewer(QWidget):
 
         main_layout = QVBoxLayout(self)
         main_layout.addLayout(text_alias_layout)
+        main_layout.addLayout(show_lang_layout)       
         main_layout.addLayout(txt_path_layout)
         main_layout.addLayout(img_layout)
         main_layout.addLayout(btn_layout)

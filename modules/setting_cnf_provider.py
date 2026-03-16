@@ -179,7 +179,7 @@ class SettingCnfProvider:
         with open(os.path.join("conf", "alias_mapping.csv"), newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)            
             for row in reader:
-                alias_mapping_dict[row["Ref Alias"]] = [row["Evidence Alias"], row["Evidence Alias 2"], row["Evidence Alias 3"]]
+                alias_mapping_dict[row["Ref Alias"]] = [row["Evidence Alias"], row["Evidence Alias 2"], row["Evidence Alias 3"], row["Evidence Alias 4"]]
         return alias_mapping_dict
 
 
