@@ -1,35 +1,35 @@
 Test-Case,language
 VTP09_1,English
-VTP09_10,Turkish
-VTP09_11,Ukrainian
-VTP09_12,Swedish
-VTP09_13,Spanish
-VTP09_14,Slovenian
-VTP09_15,Slovak
-VTP09_16,S. Chinese
-VTP09_16 (1),Russian
-VTP09_19,Romanian
-VTP09_2,Norwegian
-VTP09_20,Portuguese
-VTP09_21,Polish
-VTP09_22,Lithuanian
-VTP09_23,Latvian
-VTP09_24,Japanese
-VTP09_25,Korean
-VTP09_26,Italian
-VTP09_27,Hungarian
-VTP09_28,Icelandic
-VTP09_29,Hebrew
-VTP09_3,German
-VTP09_30,Greek
-VTP09_31,French
-VTP09_32,Finnish
-VTP09_33,Estonian
-VTP09_34,T. Chinese
-VTP09_35,Dutch
-VTP09_4,Czech
-VTP09_5,Danish
-VTP09_6,Croatian
-VTP09_7,Bulgarian
+VTP09_10,Portuguese
+VTP09_11,Finnish
+VTP09_12,Danish
+VTP09_13,Korean
+VTP09_14,T. Chinese
+VTP09_15,S. Chinese
+VTP09_16,Japanese
+VTP09_16 (1),
+VTP09_19,Bulgarian
+VTP09_2,French
+VTP09_20,Croatian
+VTP09_21,Estonian
+VTP09_22,Greek
+VTP09_23,Hebrew
+VTP09_24,Hungarian
+VTP09_25,Icelandic
+VTP09_26,Romanian
+VTP09_27,Lithuanian
+VTP09_28,Polish
+VTP09_29,Latvian
+VTP09_3,Italian
+VTP09_30,Russian
+VTP09_31,Slovak
+VTP09_32,Slovenian
+VTP09_33,Turkish
+VTP09_34,Ukrainian
+VTP09_35,Norwegian
+VTP09_4,German
+VTP09_5,Spanish
+VTP09_6,Dutch
+VTP09_7,Czech
 VTP09_8,Arabic
-VTP09_9,
+VTP09_9,Swedish
