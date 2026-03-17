@@ -4,7 +4,7 @@ import shutil
 import pandas as pd
 
 from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QLineEdit, QMessageBox, QPlainTextEdit, QTextEdit, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
-from PySide6.QtGui import QPalette, Qt
+from PySide6.QtGui import QIcon, QPalette, QPixmap, Qt
 from trio import Path
 import yaml
 from PySide6.QtWidgets import QFileDialog
@@ -71,7 +71,6 @@ class ImageCompareViewer(QWidget):
         # Buttons
         self.back_btn = QPushButton("◀ Back")
         self.next_btn = QPushButton("Next ▶")
-
         self.back_btn.clicked.connect(self.prev_image)
         self.next_btn.clicked.connect(self.next_image)
         self.back_btn.setFixedHeight(40)
@@ -298,7 +297,8 @@ class ImageCompareViewer(QWidget):
         self.view_evidence.set_image(evidence_pic_path)
         if evidence_pic_path != None:
             self.evidence_pic_path_last = evidence_pic_path
-    def next_image(self):    
+
+    def next_image(self): 
         self.tbx_head_bx2_ch1.setText("")
         self.tbx_para_bx2_ch2.setText("")    
         if self.index is None:
@@ -308,6 +308,8 @@ class ImageCompareViewer(QWidget):
         picPropEvidence:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
         if not picPropEvidence:
             return
+        self.setBtnPictureDirection(False)
+        self.tbx_lang.setText("")
         self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef
         self.picture_number.setText(f"Pic Number: {self.index + 1} / {len(self.evidence_alias_mapping_dict)}")
         ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
@@ -316,9 +318,8 @@ class ImageCompareViewer(QWidget):
         self.tbx_path_evidence.setText(evidence_pic_path if evidence_pic_path else "")
         self.tbx_alias_ref.setText(self.picPropRef.alias if self.picPropRef else "")
         self.tbx_alias_evidence.setText(picPropEvidence.alias if picPropEvidence else "")
-
-        self.load_images(ref_pic_path, evidence_pic_path)
-        
+        self.tbx_lang.setText(picPropEvidence.languageRef)
+        self.load_images(ref_pic_path, evidence_pic_path)        
         string_head_dict:dict = self.header_string_lang_dict.get(self.picPropRef.pic_name_without_exten) if self.picPropRef else None
         if string_head_dict:
             head_string = string_head_dict.get(self.picPropRef.language)
@@ -327,6 +328,7 @@ class ImageCompareViewer(QWidget):
         if string_para_dict:
             para_string = string_para_dict.get(self.picPropRef.language)
             self.tbx_para_bx2_ch2.setText(para_string)
+        self.setBtnPictureDirection(True)
 
     def prev_image(self):
         self.tbx_head_bx2_ch1.setText("")
@@ -338,6 +340,8 @@ class ImageCompareViewer(QWidget):
         picPropEvidence:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
         if not picPropEvidence:
             return
+        self.setBtnPictureDirection(False)
+        self.tbx_lang.setText("")
         self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef 
         self.picture_number.setText(f"Pic Number: {self.index + 1} / {len(self.evidence_alias_mapping_dict)}")
         ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
@@ -346,6 +350,7 @@ class ImageCompareViewer(QWidget):
         self.tbx_path_evidence.setText(evidence_pic_path if evidence_pic_path else "")
         self.tbx_alias_ref.setText(self.picPropRef.alias if self.picPropRef else "")
         self.tbx_alias_evidence.setText(picPropEvidence.alias if picPropEvidence else "")
+        self.tbx_lang.setText(picPropEvidence.languageRef)
         self.load_images(ref_pic_path, evidence_pic_path)
         string_head_dict:dict = self.header_string_lang_dict.get(self.picPropRef.pic_name_without_exten) if self.picPropRef else None
         if string_head_dict:
@@ -355,11 +360,25 @@ class ImageCompareViewer(QWidget):
         if string_para_dict:
             para_string = string_para_dict.get(self.picPropRef.language)
             self.tbx_para_bx2_ch2.setText(para_string)
+        self.setBtnPictureDirection(True)
+
+    def setBtnPictureDirection(self, state:bool):
+        loadTxt = "Loading..."
+        self.next_btn.setEnabled(state)
+        self.back_btn.setEnabled(state)
+        if not state:
+            self.next_btn.setText(loadTxt)            
+            self.back_btn.setText(loadTxt)
+        else:
+            self.next_btn.setText("Next ▶")            
+            self.back_btn.setText("◀ Back")
+
+
 
 
     
     def load_string_language_xls(self, file_path):   
-        self.ref_choose_btn.setEnabled = False 
+        self.ref_choose_btn.setEnabled(False) 
         self.ref_choose_btn.setText("Loading...")  
         timestamp = os.path.getmtime(file_path)
         modified_date = datetime.fromtimestamp(timestamp) 
@@ -388,7 +407,7 @@ class ImageCompareViewer(QWidget):
         __read_data(df_para, self.para_string_lang_dict)
 
         self.ref_txt_xlsx_file.setText(os.path.basename(file_path) if file_path else None)
-        self.ref_choose_btn.setEnabled = True
+        self.ref_choose_btn.setEnabled(True)
         self.ref_choose_btn.setText("Choose XLSX File")
         return 
 

@@ -21,6 +21,7 @@ class PicPropEvidence:
         self.test_case_name = None
         self.full_path = full_path
         self.PicPropRef = None
+        self.languageRef = None
         for dir in Path(full_path).parent.parents:
             if re.match(r'^VTP\d+$', dir.name, re.IGNORECASE):
                 self.vpt_name = dir.name    
@@ -50,4 +51,5 @@ class PicPropEvidence:
                 if pic_prop_ref.alias == ref_alias_select and pic_prop_ref.language == language:
                     # self.key = f"{pic_prop_ref.alias}_{self.alias}"
                     self.PicPropRef = pic_prop_ref
+                    self.languageRef = language
                     break
