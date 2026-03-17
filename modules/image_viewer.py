@@ -65,6 +65,7 @@ class ImageCompareViewer(QWidget):
         self.picture_number = QLabel()
         self.cb_fixed_picref = QCheckBox("Fixed PicRef")
         self.txt_set_index = QLineEdit()
+        self.txt_set_index.setFixedWidth(50)
         self.txt_set_index.returnPressed.connect(self.set_index)
         # Zoomable views
         self.view_ref = ZoomableImageView()

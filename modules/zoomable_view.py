@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
-from PySide6.QtGui import QPainter, QPixmap
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QPainter, QPen, QPixmap
+from PySide6.QtCore import QPoint, QRectF, Qt
 
 
 class ZoomableImageView(QGraphicsView):
@@ -22,6 +22,11 @@ class ZoomableImageView(QGraphicsView):
         
         self.zoom_factor = 1.25
 
+
+        self.origin = QPoint()
+        self.rubber_rect_item = None
+        self.setMouseTracking(True)
+
     def set_image(self, image_path):
         if not image_path:
             self.scene.clear()
@@ -34,9 +39,57 @@ class ZoomableImageView(QGraphicsView):
         self.resetTransform()
         self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
 
+    # def maskSelect(self):
+
+    #     pass    
+
 
     def wheelEvent(self, event):
         if event.angleDelta().y() > 0:
             self.scale(self.zoom_factor, self.zoom_factor)
         else:
             self.scale(1 / self.zoom_factor, 1 / self.zoom_factor)
+
+
+    # def mousePressEvent(self, event):
+    #     if event.button() == Qt.LeftButton:
+    #         self.origin = event.pos()
+
+    #         if self.rubber_rect_item:
+    #             self.scene.removeItem(self.rubber_rect_item)
+
+    #         self.rubber_rect_item = self.scene.addRect(
+    #             QRectF(), QPen(Qt.red, 2)
+    #         )
+
+    # def mouseMoveEvent(self, event):
+    #     if self.rubber_rect_item:
+    #         rect = QRectF(
+    #             self.mapToScene(self.origin),
+    #             self.mapToScene(event.pos())
+    #         ).normalized()
+
+    #         self.rubber_rect_item.setRect(rect)
+
+    # def mouseReleaseEvent(self, event):
+    #     if event.button() == Qt.LeftButton and self.rubber_rect_item:
+    #         rect = self.rubber_rect_item.rect()
+
+    #         print("Selected rect (scene coords):", rect)
+
+    #         # Convert to image coordinates
+    #         pixmap = self.pixmap_item.pixmap()
+
+    #         x = int(rect.x())
+    #         y = int(rect.y())
+    #         w = int(rect.width())
+    #         h = int(rect.height())
+
+    #         cropped = pixmap.copy(x, y, w, h)
+
+    #         cropped.save("cropped.png")
+    #         print("Saved cropped.png")
+
+    #         # Optional: remove selection box
+    #         self.scene.removeItem(self.rubber_rect_item)
+    #         self.rubber_rect_item = None
