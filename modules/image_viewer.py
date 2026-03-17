@@ -194,11 +194,13 @@ class ImageCompareViewer(QWidget):
 
         pass_fail_layout = QHBoxLayout()
         self.fail_btn = QPushButton("Fail")
+        self.fail_btn.setVisible(False)
         self.fail_btn.setStyleSheet("background-color: red; color: white;")
         self.fail_btn.clicked.connect(lambda:self.passfail_movefolder("fail"))
         self.fail_btn.setFixedWidth(75)
         self.fail_btn.setFixedHeight(40)
         self.pass_btn = QPushButton("Pass")
+        self.pass_btn.setVisible(False)
         self.pass_btn.setStyleSheet("background-color: green; color: white;")
         self.pass_btn.clicked.connect(lambda:self.passfail_movefolder("pass"))
         self.pass_btn.setFixedWidth(75)
