@@ -56,6 +56,7 @@ class ImageCompareViewer(QWidget):
         self.view_evidence.set_image(None)
         self.tbx_head_bx2_ch1.setText("")
         self.tbx_para_bx2_ch2.setText("")
+        self.tbx_lang.setText("")
 
     def init_ui(self):
         self.setWindowTitle(f"Images Compare (Zoom & Pan) v{VERSION}")
