@@ -45,6 +45,7 @@ class ImageCompareViewer(QWidget):
                 self.txt_set_index.setText("")
         except ValueError:
             self.txt_set_index.setText("")
+
     def clear_all_components_value(self):
         self.txt_set_index.setText("")
         self.tbx_path_ref.setText("")
@@ -67,6 +68,8 @@ class ImageCompareViewer(QWidget):
         self.txt_set_index = QLineEdit()
         self.txt_set_index.setFixedWidth(50)
         self.txt_set_index.returnPressed.connect(self.set_index)
+                        # Layouts
+
         # Zoomable views
         self.view_ref = ZoomableImageView()
         self.view_evidence = ZoomableImageView()
@@ -91,6 +94,11 @@ class ImageCompareViewer(QWidget):
         txt_path_layout.addWidget(QLabel("Path Evidence:"))
         txt_path_layout.addWidget(self.tbx_path_evidence)
 
+                # Layouts
+        mark_boder_layout = QHBoxLayout()
+        self.mask_border_checkbox = QCheckBox("Mark Border Picture", self)
+        self.mask_border_checkbox.stateChanged.connect(self.onStateChanged)
+        mark_boder_layout.addWidget(self.mask_border_checkbox)
 
         eviden_resource_layout = QHBoxLayout()
         label_ref = QLabel("Reference")
@@ -226,11 +234,18 @@ class ImageCompareViewer(QWidget):
         main_layout.addLayout(text_alias_layout)
         main_layout.addLayout(show_lang_layout)       
         main_layout.addLayout(txt_path_layout)
+        main_layout.addLayout(mark_boder_layout)
         main_layout.addLayout(img_layout)
         main_layout.addLayout(btn_layout)
         main_layout.addLayout(buttom_layout_base_0)
 
-
+    def onStateChanged(self, state):
+        if state == Qt.CheckState.Checked.value: # or simply 2
+            self.view_ref.setMaskborderMode(True)
+            self.view_evidence.setMaskborderMode(True)
+        else:
+            self.view_ref.setMaskborderMode(False)
+            self.view_evidence.setMaskborderMode(False)
 
     def passfail_movefolder(self, status):
         if self.evidence_pic_path_last != None:
