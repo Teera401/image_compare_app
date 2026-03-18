@@ -194,13 +194,13 @@ class ImageCompareViewer(QWidget):
 
         pass_fail_layout = QHBoxLayout()
         self.fail_btn = QPushButton("Fail")
-        self.fail_btn.setVisible(False)
+        # self.fail_btn.setVisible(False)
         self.fail_btn.setStyleSheet("background-color: red; color: white;")
         self.fail_btn.clicked.connect(lambda:self.passfail_movefolder("fail"))
         self.fail_btn.setFixedWidth(75)
         self.fail_btn.setFixedHeight(40)
         self.pass_btn = QPushButton("Pass")
-        self.pass_btn.setVisible(False)
+        # self.pass_btn.setVisible(False)
         self.pass_btn.setStyleSheet("background-color: green; color: white;")
         self.pass_btn.clicked.connect(lambda:self.passfail_movefolder("pass"))
         self.pass_btn.setFixedWidth(75)
@@ -238,25 +238,34 @@ class ImageCompareViewer(QWidget):
             self.pass_btn.setText("Move...")  if "pass" == status else self.fail_btn.setText("Move...")
             current_date = QDate.currentDate()
             formatted = current_date.toString("yyyyMMdd")
-
-            tar_get = os.path.join(self.settingCnfProvider.destination_dir_passfail, status)       
+            pathparent = Path(self.evidence_pic_path_last).parent.parent
+            parent_path = str(pathparent)
+            tar_get = os.path.join(self.settingCnfProvider.destination_dir_passfail, status, pathparent.name)       
             # source_path = self.settingCnfProvider.photo_evidence_path
             
-            parent_path = str(Path(self.evidence_pic_path_last).parent.parent)
             folder_name_backup = f'_{formatted}_{os.path.basename(parent_path)}'
             copy_backup =  f'{os.path.join(str(Path(parent_path).parent), folder_name_backup)}'
-
-            try:
-                shutil.copytree(parent_path, copy_backup)
-            except:
-                self.show_dialog("Can not backup evidence folder", QMessageBox.Critical)
-                self.state_move_evidence.setText("Error!")
-                return
-            try:
-                shutil.move(parent_path, tar_get)
-            except:
-                self.show_dialog("Can not move evidence folder", QMessageBox.Critical)
-                self.state_move_evidence.setText("Error!")
+            ret = QMessageBox.question(
+                self,
+                "Confirm evidence status",
+                f"Are you sure you want to move evidence to {status} folder?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No # Default button
+            )
+            if ret == QMessageBox.StandardButton.Yes:
+                try:
+                    shutil.copytree(parent_path, copy_backup)
+                except:
+                    self.show_dialog("Can not backup evidence folder", QMessageBox.Critical)
+                    self.state_move_evidence.setText("Error!")
+                    return
+                try:
+                    shutil.move(parent_path, tar_get)
+                except:
+                    self.show_dialog("Can not move evidence folder", QMessageBox.Critical)
+                    self.state_move_evidence.setText("Error!")
+                    return
+            else:
                 return
 
         else:
