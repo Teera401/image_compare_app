@@ -393,12 +393,6 @@ class ImageCompareViewer(QWidget):
         if not picPropEvidence:
             return
         self.picPropRefList = picPropEvidence.picPropRefList if not self.cb_fixed_picref.isChecked() else self.picPropRefList
-        if len(self.picPropRefList) == 1:
-            self.back_ref_pic.setEnabled(False)
-            self.next_ref_pic.setEnabled(False)
-        else:
-            self.back_ref_pic.setEnabled(True)
-            self.next_ref_pic.setEnabled(True)
         self.group_ref_pics_tb.setText(f"{self.group_picref_idx + 1} / {len(self.picPropRefList)}")
 
         self.setBtnPictureDirection(False)
@@ -435,12 +429,6 @@ class ImageCompareViewer(QWidget):
         if not picPropEvidence:
             return
         self.picPropRefList = picPropEvidence.picPropRefList if not self.cb_fixed_picref.isChecked() else self.picPropRefList 
-        if len(self.picPropRefList) == 1:
-            self.back_ref_pic.setEnabled(False)
-            self.next_ref_pic.setEnabled(False)
-        else:
-            self.back_ref_pic.setEnabled(True)
-            self.next_ref_pic.setEnabled(True)
         self.group_ref_pics_tb.setText(f"{self.group_picref_idx + 1} / {len(self.picPropRefList)}")
 
 
