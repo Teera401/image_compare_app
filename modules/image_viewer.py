@@ -28,6 +28,7 @@ class ImageCompareViewer(QWidget):
         # self.evidence_alias_mapping_dict = self.settingCnfProvider.read_evidence_mapping_config(is_from_folder=False)
         # read_evidence_mapping_config = settingCnf.read_evidence_mapping_config()
         self.index = None
+        self.group_picref_idx = 0
         self.init_ui()
         
         self.header_string_lang_dict = dict()
@@ -95,10 +96,28 @@ class ImageCompareViewer(QWidget):
         txt_path_layout.addWidget(self.tbx_path_evidence)
 
                 # Layouts
-        mark_boder_layout = QHBoxLayout()
+        option_layout = QHBoxLayout()
         self.mask_border_checkbox = QCheckBox("Mark Border Picture", self)
         self.mask_border_checkbox.stateChanged.connect(self.onStateChanged)
-        mark_boder_layout.addWidget(self.mask_border_checkbox)
+        self.mask_border_checkbox.setVisible(False)        
+        self.next_ref_pic = QPushButton("Next Ref ▶")
+        self.back_ref_pic = QPushButton("◀ Back Ref")
+        self.next_ref_pic.setStyleSheet("background-color: orange;")
+        self.back_ref_pic.setStyleSheet("background-color: orange;")
+        self.next_ref_pic.setFixedWidth(100)
+        self.back_ref_pic.setFixedWidth(100)
+        self.next_ref_pic.setFixedHeight(35)
+        self.back_ref_pic.setFixedHeight(35)
+        self.group_ref_pics_tb = QLineEdit()
+        self.group_ref_pics_tb.setFixedWidth(80)
+        self.group_ref_pics_tb.setFixedHeight(35)
+        option_layout.addWidget(self.mask_border_checkbox)        
+        option_layout.addWidget(self.back_ref_pic)
+        option_layout.addWidget(self.next_ref_pic)
+        option_layout.addWidget(self.group_ref_pics_tb)
+        option_layout.addStretch()
+        self.next_ref_pic.clicked.connect(self.nextrefpic)
+        self.back_ref_pic.clicked.connect(self.backrefpic)
 
         eviden_resource_layout = QHBoxLayout()
         label_ref = QLabel("Reference")
@@ -234,7 +253,7 @@ class ImageCompareViewer(QWidget):
         main_layout.addLayout(text_alias_layout)
         main_layout.addLayout(show_lang_layout)       
         main_layout.addLayout(txt_path_layout)
-        main_layout.addLayout(mark_boder_layout)
+        main_layout.addLayout(option_layout)
         main_layout.addLayout(img_layout)
         main_layout.addLayout(btn_layout)
         main_layout.addLayout(buttom_layout_base_0)
@@ -320,13 +339,50 @@ class ImageCompareViewer(QWidget):
         self.clear_all_components_value()
 
 
-    def load_images(self, ref_pic_path=None, evidence_pic_path=None):
+    def load_images(self, ref_pic_path=None, evidence_pic_path=None, isShifRef=False):
         self.view_ref.set_image(ref_pic_path)
+        if isShifRef:
+            return
         self.view_evidence.set_image(evidence_pic_path)
         if evidence_pic_path != None:
             self.evidence_pic_path_last = evidence_pic_path
+        # ref_pic_path = self.picPropRefList[self.group_picref_idx].full_path if len(self.picPropRefList) > 0 else None
+
+    def nextrefpic(self):
+        self.refpic_move( direction = True)
+
+    def backrefpic(self):
+        self.refpic_move( direction = False)
+
+    def refpic_move(self, direction:bool = True):        
+        self.group_picref_idx = self.group_picref_idx + 1 if direction else self.group_picref_idx - 1       
+        if self.group_picref_idx < 0:
+            self.group_picref_idx = 0
+        elif self.group_picref_idx >= len(self.picPropRefList):
+            self.group_picref_idx = len(self.picPropRefList) - 1
+            
+        self.group_ref_pics_tb.setText(f"{self.group_picref_idx + 1} / {len(self.picPropRefList)}")
+        self.tbx_head_bx2_ch1.setText("")
+        self.tbx_para_bx2_ch2.setText("")
+        picPropEvidence:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
+        if not picPropEvidence:
+            return 
+        ref_pic_path = self.picPropRefList[self.group_picref_idx].full_path if len(self.picPropRefList) > 0 else None
+        self.tbx_path_ref.setText(ref_pic_path if ref_pic_path else "")
+        self.tbx_alias_ref.setText(self.picPropRefList[self.group_picref_idx].alias if len(self.picPropRefList) > 0 else "")
+        self.load_images(ref_pic_path=ref_pic_path, isShifRef=True)        
+        string_head_dict:dict = self.header_string_lang_dict.get(self.picPropRefList[self.group_picref_idx].pic_name_without_exten) if len(self.picPropRefList) > 0 else None
+        if string_head_dict:
+            head_string = string_head_dict.get(self.picPropRefList[self.group_picref_idx].language)
+            self.tbx_head_bx2_ch1.setText(head_string)
+        string_para_dict:dict = self.para_string_lang_dict.get(self.picPropRefList[self.group_picref_idx].pic_name_without_exten) if len(self.picPropRefList) > 0 else None
+        if string_para_dict:
+            para_string = string_para_dict.get(self.picPropRefList[self.group_picref_idx].language)
+            self.tbx_para_bx2_ch2.setText(para_string)
+
 
     def next_image(self): 
+        self.group_picref_idx = 0
         self.tbx_head_bx2_ch1.setText("")
         self.tbx_para_bx2_ch2.setText("")    
         if self.index is None:
@@ -336,29 +392,39 @@ class ImageCompareViewer(QWidget):
         picPropEvidence:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
         if not picPropEvidence:
             return
+        self.picPropRefList = picPropEvidence.picPropRefList if not self.cb_fixed_picref.isChecked() else self.picPropRefList
+        if len(self.picPropRefList) == 1:
+            self.back_ref_pic.setEnabled(False)
+            self.next_ref_pic.setEnabled(False)
+        else:
+            self.back_ref_pic.setEnabled(True)
+            self.next_ref_pic.setEnabled(True)
+        self.group_ref_pics_tb.setText(f"{self.group_picref_idx + 1} / {len(self.picPropRefList)}")
+
         self.setBtnPictureDirection(False)
         self.tbx_lang.setText("")
-        self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef
+        # print(f"{len(self.picPropRefList)}")
         self.picture_number.setText(f"Pic Number: {self.index + 1} / {len(self.evidence_alias_mapping_dict)}")
-        ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
+        ref_pic_path = self.picPropRefList[self.group_picref_idx].full_path if len(self.picPropRefList) > 0 else None
         evidence_pic_path = picPropEvidence.full_path if picPropEvidence else None
         self.tbx_path_ref.setText(ref_pic_path if ref_pic_path else "")
         self.tbx_path_evidence.setText(evidence_pic_path if evidence_pic_path else "")
-        self.tbx_alias_ref.setText(self.picPropRef.alias if self.picPropRef else "")
-        self.tbx_alias_evidence.setText(picPropEvidence.alias if picPropEvidence else "")
+        self.tbx_alias_ref.setText(self.picPropRefList[self.group_picref_idx].alias if len(self.picPropRefList) > 0 else "")
+        self.tbx_alias_evidence.setText(picPropEvidence.aliasFileName if picPropEvidence else "")
         self.tbx_lang.setText(picPropEvidence.languageRef)
         self.load_images(ref_pic_path, evidence_pic_path)        
-        string_head_dict:dict = self.header_string_lang_dict.get(self.picPropRef.pic_name_without_exten) if self.picPropRef else None
+        string_head_dict:dict = self.header_string_lang_dict.get(self.picPropRefList[self.group_picref_idx].pic_name_without_exten) if len(self.picPropRefList) > 0 else None
         if string_head_dict:
-            head_string = string_head_dict.get(self.picPropRef.language)
+            head_string = string_head_dict.get(self.picPropRefList[self.group_picref_idx].language)
             self.tbx_head_bx2_ch1.setText(head_string)
-        string_para_dict:dict = self.para_string_lang_dict.get(self.picPropRef.pic_name_without_exten) if self.picPropRef else None
+        string_para_dict:dict = self.para_string_lang_dict.get(self.picPropRefList[self.group_picref_idx].pic_name_without_exten) if len(self.picPropRefList) > 0 else None
         if string_para_dict:
-            para_string = string_para_dict.get(self.picPropRef.language)
+            para_string = string_para_dict.get(self.picPropRefList[self.group_picref_idx].language)
             self.tbx_para_bx2_ch2.setText(para_string)
         self.setBtnPictureDirection(True)
 
     def prev_image(self):
+        self.group_picref_idx = 0
         self.tbx_head_bx2_ch1.setText("")
         self.tbx_para_bx2_ch2.setText("")
         if self.index is None:
@@ -368,25 +434,35 @@ class ImageCompareViewer(QWidget):
         picPropEvidence:PicPropEvidence = list(self.evidence_alias_mapping_dict.values())[self.index] if self.index < len(self.evidence_alias_mapping_dict) else None
         if not picPropEvidence:
             return
+        self.picPropRefList = picPropEvidence.picPropRefList if not self.cb_fixed_picref.isChecked() else self.picPropRefList 
+        if len(self.picPropRefList) == 1:
+            self.back_ref_pic.setEnabled(False)
+            self.next_ref_pic.setEnabled(False)
+        else:
+            self.back_ref_pic.setEnabled(True)
+            self.next_ref_pic.setEnabled(True)
+        self.group_ref_pics_tb.setText(f"{self.group_picref_idx + 1} / {len(self.picPropRefList)}")
+
+
         self.setBtnPictureDirection(False)
         self.tbx_lang.setText("")
-        self.picPropRef = picPropEvidence.PicPropRef if not self.cb_fixed_picref.isChecked() else self.picPropRef 
+        # print(f"{len(self.picPropRefList)}")
         self.picture_number.setText(f"Pic Number: {self.index + 1} / {len(self.evidence_alias_mapping_dict)}")
-        ref_pic_path = self.picPropRef.full_path if self.picPropRef else None
+        ref_pic_path = self.picPropRefList[self.group_picref_idx].full_path if len(self.picPropRefList) > 0 else None
         evidence_pic_path = picPropEvidence.full_path if picPropEvidence else None
         self.tbx_path_ref.setText(ref_pic_path if ref_pic_path else "")
         self.tbx_path_evidence.setText(evidence_pic_path if evidence_pic_path else "")
-        self.tbx_alias_ref.setText(self.picPropRef.alias if self.picPropRef else "")
-        self.tbx_alias_evidence.setText(picPropEvidence.alias if picPropEvidence else "")
+        self.tbx_alias_ref.setText(self.picPropRefList[self.group_picref_idx].alias if len(self.picPropRefList) > 0 else "")
+        self.tbx_alias_evidence.setText(picPropEvidence.aliasFileName if picPropEvidence else "")
         self.tbx_lang.setText(picPropEvidence.languageRef)
         self.load_images(ref_pic_path, evidence_pic_path)
-        string_head_dict:dict = self.header_string_lang_dict.get(self.picPropRef.pic_name_without_exten) if self.picPropRef else None
+        string_head_dict:dict = self.header_string_lang_dict.get(self.picPropRefList[self.group_picref_idx].pic_name_without_exten) if len(self.picPropRefList) > 0 else None
         if string_head_dict:
-            head_string = string_head_dict.get(self.picPropRef.language)
+            head_string = string_head_dict.get(self.picPropRefList[self.group_picref_idx].language)
             self.tbx_head_bx2_ch1.setText(head_string)
-        string_para_dict:dict = self.para_string_lang_dict.get(self.picPropRef.pic_name_without_exten) if self.picPropRef else None
+        string_para_dict:dict = self.para_string_lang_dict.get(self.picPropRefList[self.group_picref_idx].pic_name_without_exten) if len(self.picPropRefList) > 0 else None
         if string_para_dict:
-            para_string = string_para_dict.get(self.picPropRef.language)
+            para_string = string_para_dict.get(self.picPropRefList[self.group_picref_idx].language)
             self.tbx_para_bx2_ch2.setText(para_string)
         self.setBtnPictureDirection(True)
 

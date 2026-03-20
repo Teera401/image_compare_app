@@ -6,6 +6,7 @@ import yaml
 import csv
 import os
 
+from modules.evidence_alias import EvidenceAlias
 from modules.pic_prop_evidence import PicPropEvidence
 from modules.pic_prop_ref import PicPropRef
 from modules.string_compare_xlsx import StringCompareSlsx
@@ -113,7 +114,7 @@ class SettingCnfProvider:
             writer.writerow(["Alias", "VTP Name", "Full Path"])
             for pic in evidence_pics:
                 pic: PicPropEvidence
-                writer.writerow([pic.alias, pic.vpt_name, pic.full_path])
+                writer.writerow([pic.aliasFileName, pic.vpt_name, pic.full_path])
 
     def read_alias_evidence_alias_mapping_config(self):
         evidence_alias_mapping_set = set()
@@ -164,22 +165,40 @@ class SettingCnfProvider:
 
         with open(os.path.join("conf", "alias_mapping.csv"), mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
-            writer.writerow(["Ref Alias", "Evidence Alias", "Evidence Alias 2", "Evidence Alias 3"])
+            writer.writerow(["Group","Ref Alias", "Evidence Alias", "Evidence Alias 2", "Evidence Alias 3"])
             indx = 0
 
             for alias in refprop:    
-                writer.writerow([alias, evidence_alias_mapping_set[indx] if indx < len(evidence_alias_mapping_set) else "", "", ""])
+                writer.writerow([alias,"", evidence_alias_mapping_set[indx] if indx < len(evidence_alias_mapping_set) else "", "", ""])
                 indx += 1
             if indx < len(evidence_alias_mapping_set):
                 for i in range(indx, len(evidence_alias_mapping_set)):
-                    writer.writerow(["", evidence_alias_mapping_set[i], "", ""])
+                    writer.writerow(["", "", evidence_alias_mapping_set[i], "", ""])
 
     def read_alias_mapping_config(self):
         alias_mapping_dict = dict()
+        alias_membergroup_dict = dict()
         with open(os.path.join("conf", "alias_mapping.csv"), newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)            
             for row in reader:
-                alias_mapping_dict[row["Ref Alias"]] = [row["Evidence Alias"], row["Evidence Alias 2"], row["Evidence Alias 3"], row["Evidence Alias 4"]]
+                evidenceAlias = EvidenceAlias()
+                for key, val in row.items():                    
+                    if key == "Group":
+                        evidenceAlias.group = val
+                    elif key == "Ref Alias":
+                        evidenceAlias.ref_alias = val
+                    else:
+                        evidenceAlias.add_evdalias_list(val)
+                if evidenceAlias.haveGroup():
+                    alias_membergroup_ls = alias_membergroup_dict.get(evidenceAlias.group)
+                    if alias_membergroup_ls == None:
+                        alias_membergroup_ls = list()
+                        alias_membergroup_dict[evidenceAlias.group] = alias_membergroup_ls
+                    alias_membergroup_ls.append(evidenceAlias)
+                    evidenceAlias.alias_membergroup_ls = alias_membergroup_ls
+                alias_mapping_dict[evidenceAlias.ref_alias] = evidenceAlias
+
+                # alias_mapping_dict[row["Ref Alias"]] = [row["Group"], row["Evidence Alias"], row["Evidence Alias 2"], row["Evidence Alias 3"], row["Evidence Alias 4"]]
         return alias_mapping_dict
 
 
