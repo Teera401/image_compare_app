@@ -17,8 +17,8 @@ from PySide6.QtCore import QDate
 CONFIG_FILE = "config.yaml"
 SHEET_HEAD = 'Head-New'
 SHEET_PARA = 'Para-New'
-VERSION = '1.0.0'
-DETAIL = 'Initial Version'
+VERSION = '1.1.0'
+DETAIL = 'Implement dynamic picture reference'
 
 class ImageCompareViewer(QWidget):
     def __init__(self):
